@@ -9,6 +9,6 @@ namespace library.Infrastructure.AutoMapper
 {
     public class MapperProfile :Profile
     {
-
+        
     }
 }
