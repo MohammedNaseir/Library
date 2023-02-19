@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using library.Core.Exceptions;
 using library.Core.ViewModels;
 using library.Data;
 using library.Data.Models;
@@ -6,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,40 +16,66 @@ namespace library.Infrastructure.Services.Categories
     public class CategoryService : ICategoryService
     {
         private readonly libraryDbContext _db;
-
         public CategoryService(libraryDbContext db)
         {
             _db = db;
         }
 
-        Task<int> ICategoryService.Create(CategoryVM categoryVM)
+        public async Task<int> Create(CategoryVM Category)
+        {
+           Category category = new Category { Name = Category.Name };
+           await _db.Categories.AddAsync(category);
+           await _db.SaveChangesAsync();
+           return 1;
+        }
+
+        public Task<int> Delete(int Id)
         {
             throw new NotImplementedException();
         }
 
-        Task<int> ICategoryService.Delete(int Id)
+        public async Task<CategoryVM> Get(int Id)
+        {
+            var category = await _db.Categories.SingleOrDefaultAsync(x => x.Id == Id && !x.IsDeleted);
+            if (category == null)
+            {
+                throw new EntityNotFoundException();
+            }
+            CategoryVM categoryVM = new CategoryVM
+            {
+                Id = category.Id,
+                Name = category.Name
+            };
+            return (categoryVM);
+        }
+
+        public Task<Category> GetAll()
         {
             throw new NotImplementedException();
         }
 
-        Task<CategoryVM> ICategoryService.Get(int Id)
+        public async Task<List<Category>> GetCategoryList()
         {
-            throw new NotImplementedException();
+            var categories = await _db.Categories.AsNoTracking().ToListAsync();
+            //if (categories == null)
+            //{
+            //    throw new EntityNotFoundException();
+            //}
+            return (categories);
         }
 
-        Task<CategoryVM> ICategoryService.GetAll()
+        public async Task<int> Update(CategoryVM Category)
         {
-            throw new NotImplementedException();
-        }
+            var category = _db.Categories.Find(Category.Id);
 
-        Task<List<CategoryVM>> ICategoryService.GetCategoryList()
-        {
-            throw new NotImplementedException();
-        }
+            if (category is null)
+                return -1;
 
-        Task<int> ICategoryService.Update(CategoryVM categoryVM)
-        {
-            throw new NotImplementedException();
+            category.Name = Category.Name;
+            category.LastUpdatedOn = DateTime.Now;
+
+            await _db.SaveChangesAsync();
+            return Category.Id;
         }
     }
 }
