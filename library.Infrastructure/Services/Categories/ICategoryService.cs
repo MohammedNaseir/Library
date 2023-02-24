@@ -15,6 +15,6 @@ namespace library.Infrastructure.Services.Categories
         Task<int> Update(CategoryVM Category);
         Task<CategoryVM> Get(int Id);    
         Task<List<Category>> GetCategoryList();
-        Task<int> Delete(int Id);
+        Category GetCategory(int Id);
     }
 }

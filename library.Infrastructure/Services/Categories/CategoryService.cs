@@ -29,9 +29,10 @@ namespace library.Infrastructure.Services.Categories
            return 1;
         }
 
-        public Task<int> Delete(int Id)
+        public Category GetCategory(int Id)
         {
-            throw new NotImplementedException();
+            var category =  _db.Categories.FirstOrDefault(c => c.Id == Id);
+            return category;
         }
 
         public async Task<CategoryVM> Get(int Id)
