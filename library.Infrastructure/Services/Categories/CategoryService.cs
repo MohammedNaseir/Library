@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics.X86;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,18 +16,22 @@ namespace library.Infrastructure.Services.Categories
 {
     public class CategoryService : ICategoryService
     {
+        private readonly IMapper _mapper;
         private readonly libraryDbContext _db;
-        public CategoryService(libraryDbContext db)
+        public CategoryService(libraryDbContext db, IMapper mapper)
         {
             _db = db;
+            _mapper = mapper;
         }
 
-        public async Task<int> Create(CategoryVM Category)
+        public async Task<CategoryViewModel> Create(CategoryVM Category)
         {
-           Category category = new Category { Name = Category.Name };
+
+           var category = _mapper.Map<Category>(Category);
            await _db.Categories.AddAsync(category);
            await _db.SaveChangesAsync();
-           return 1;
+           var viewModel = _mapper.Map<CategoryViewModel>(category);
+           return viewModel;
         }
 
         public Category GetCategory(int Id)
@@ -42,41 +47,39 @@ namespace library.Infrastructure.Services.Categories
             {
                 throw new EntityNotFoundException();
             }
-            CategoryVM categoryVM = new CategoryVM
-            {
-                Id = category.Id,
-                Name = category.Name
-            };
+            var categoryVM = _mapper.Map<CategoryVM>(category);
+            //CategoryVM categoryVM = new CategoryVM
+            //{
+            //    Id = category.Id,
+            //    Name = category.Name
+            //};
             return (categoryVM);
         }
 
-        public Task<Category> GetAll()
+       
+        public async Task<IEnumerable<CategoryViewModel>> GetCategoryList()
         {
-            throw new NotImplementedException();
+            var categories = await _db.Categories
+                .AsNoTracking()
+                .ToListAsync();
+            var viewModel = _mapper.Map<IEnumerable<CategoryViewModel>>(categories);
+            return (viewModel);
         }
 
-        public async Task<List<Category>> GetCategoryList()
+        public async Task<CategoryViewModel> Update(CategoryVM model)
         {
-            var categories = await _db.Categories.AsNoTracking().ToListAsync();
-            //if (categories == null)
-            //{
-            //    throw new EntityNotFoundException();
-            //}
-            return (categories);
-        }
-
-        public async Task<int> Update(CategoryVM Category)
-        {
-            var category = _db.Categories.Find(Category.Id);
-
-            if (category is null)
-                return -1;
-
-            category.Name = Category.Name;
+            var category = await _db.Categories.FindAsync(model.Id);
+            category = _mapper.Map(model, category);
+            //category.Name = model.Name;
             category.LastUpdatedOn = DateTime.Now;
-
             await _db.SaveChangesAsync();
-            return Category.Id;
+            var viewModel = _mapper.Map<CategoryViewModel>(category);
+            return viewModel;
+        }
+
+        public  Category IsCategoryExists(CategoryVM category)
+        {
+            return _db.Categories.SingleOrDefault(x=>x.Name == category.Name);
         }
     }
 }

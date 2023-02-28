@@ -10,11 +10,11 @@ namespace library.Infrastructure.Services.Categories
 {
     public interface ICategoryService
     {
-        Task<Category> GetAll();
-        Task<int> Create(CategoryVM Category);
-        Task<int> Update(CategoryVM Category);
-        Task<CategoryVM> Get(int Id);    
-        Task<List<Category>> GetCategoryList();
+        Task<CategoryViewModel> Create(CategoryVM Category);
+        Task<CategoryViewModel> Update(CategoryVM model);
+        Task<CategoryVM> Get(int Id);
+        Task<IEnumerable<CategoryViewModel>> GetCategoryList();
         Category GetCategory(int Id);
+        Category IsCategoryExists(CategoryVM category);
     }
 }

@@ -1,6 +1,8 @@
-﻿
+﻿using Microsoft.EntityFrameworkCore;
+
 namespace library.Data.Models
 {
+    [Index(nameof(Name), IsUnique = true)]
     public class Category
     {
         public int Id { get; set; }

@@ -1,9 +1,4 @@
-﻿using library.Core.ViewModels;
-using library.Data.Models;
-using library.Web.Filters;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-
+﻿
 namespace library.Web.Controllers
 {
     public class CategoriesController : Controller
@@ -33,9 +28,9 @@ namespace library.Web.Controllers
         {
             if (!ModelState.IsValid)          
                 return BadRequest();  
-            //var category = new Category { Name=model.Name };
-            await _categoryService.Create(model);           
-            return PartialView("_CategoryRow", model);
+            var viewModel = await _categoryService.Create(model);
+           
+            return PartialView("_CategoryRow", viewModel);
         }
         
         [HttpGet]
@@ -52,15 +47,11 @@ namespace library.Web.Controllers
         
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(CategoryVM model)
+        public async Task<IActionResult> Edit(CategoryVM model)
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-
-            var category = _categoryService.Update(model);
-
-            if (category.Result == -1)
-                return NotFound();
+            var category = await _categoryService.Update(model);
             return PartialView("_CategoryRow", category);
         }
         
@@ -74,6 +65,12 @@ namespace library.Web.Controllers
             category.IsDeleted = !category.IsDeleted;
             category.LastUpdatedOn = DateTime.Now;
             return Ok(category.LastUpdatedOn.ToString());
+        }
+        public IActionResult AllowItem(CategoryVM model)
+        {
+            var category = _categoryService.IsCategoryExists(model);
+            var isAllowed = category is null || category.Id.Equals(model.Id);
+            return Json(isAllowed);
         }
     }
 }
