@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace library.Data.Models
 {
+    [Index(nameof(Title),nameof(AuthorId),IsUnique =true)]
     public class Book : BaseModel
     {
         public int Id { get; set; }
@@ -29,6 +31,7 @@ namespace library.Data.Models
         public bool IsAvailableForRental { get; set; }
 
         public string Description { get; set; } = null!;
+        public ICollection<BookCategory> Categories { get; set; } = new List<BookCategory>();
 
     }
 }
