@@ -4,13 +4,6 @@ using library.Core.ViewModels;
 using library.Data;
 using library.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Runtime.Intrinsics.X86;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace library.Infrastructure.Services.Categories
 {
@@ -27,16 +20,16 @@ namespace library.Infrastructure.Services.Categories
         public async Task<CategoryViewModel> Create(CategoryVM Category)
         {
 
-           var category = _mapper.Map<Category>(Category);
-           await _db.Categories.AddAsync(category);
-           await _db.SaveChangesAsync();
-           var viewModel = _mapper.Map<CategoryViewModel>(category);
-           return viewModel;
+            var category = _mapper.Map<Category>(Category);
+            await _db.Categories.AddAsync(category);
+            await _db.SaveChangesAsync();
+            var viewModel = _mapper.Map<CategoryViewModel>(category);
+            return viewModel;
         }
 
         public Category GetCategory(int Id)
         {
-            var category =  _db.Categories.FirstOrDefault(c => c.Id == Id);
+            var category = _db.Categories.FirstOrDefault(c => c.Id == Id);
             return category;
         }
 
@@ -56,7 +49,7 @@ namespace library.Infrastructure.Services.Categories
             return (categoryVM);
         }
 
-       
+
         public async Task<IEnumerable<CategoryViewModel>> GetCategoryList()
         {
             var categories = await _db.Categories
@@ -77,9 +70,9 @@ namespace library.Infrastructure.Services.Categories
             return viewModel;
         }
 
-        public  Category IsCategoryExists(CategoryVM category)
+        public Category IsCategoryExists(CategoryVM category)
         {
-            return _db.Categories.SingleOrDefault(x=>x.Name == category.Name);
+            return _db.Categories.SingleOrDefault(x => x.Name == category.Name);
         }
     }
 }

@@ -17,7 +17,7 @@ namespace library.Web.Controllers
 
         [HttpGet]
         [AjaxOnly]
-        public IActionResult Create() 
+        public IActionResult Create()
         {
             return PartialView("_Form");
         }
@@ -26,13 +26,13 @@ namespace library.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CategoryVM model)
         {
-            if (!ModelState.IsValid)          
-                return BadRequest();  
+            if (!ModelState.IsValid)
+                return BadRequest();
             var viewModel = await _categoryService.Create(model);
-           
+
             return PartialView("_CategoryRow", viewModel);
         }
-        
+
         [HttpGet]
         [AjaxOnly]
         public async Task<IActionResult> Edit(int id)
@@ -44,7 +44,7 @@ namespace library.Web.Controllers
             }
             return PartialView("_Form", category);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CategoryVM model)
@@ -54,7 +54,7 @@ namespace library.Web.Controllers
             var category = await _categoryService.Update(model);
             return PartialView("_CategoryRow", category);
         }
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult ToggleStatus(int id)

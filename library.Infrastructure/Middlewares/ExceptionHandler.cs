@@ -1,16 +1,10 @@
-﻿using Microsoft.AspNetCore.Diagnostics;
+﻿using library.Core.Exceptions;
+using library.Core.ViewModels;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
-using System;
-using System.IO;
 using System.Net;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.Extensions;
-using library.Core.Exceptions;
-using library.Core.ViewModels;
 
 namespace library.Infrastructure.Middlewares
 {
@@ -35,11 +29,11 @@ namespace library.Infrastructure.Middlewares
             context.Response.StatusCode = (int)HttpStatusCode.OK;
             switch (exception)
             {
-                case EntityNotFoundException _:              
+                case EntityNotFoundException _:
                     response.msg = $"e:{exception.Message}";
                     response.close = 0;
                     response.status = 0;
-                    break;       
+                    break;
                 default:
                     response.msg = $"e:حدث خطأ ما";
                     response.close = 0;

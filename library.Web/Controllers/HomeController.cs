@@ -1,7 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-
-namespace library.Web.Controllers
+﻿namespace library.Web.Controllers
 {
     public class HomeController : Controller
     {
@@ -15,6 +12,6 @@ namespace library.Web.Controllers
             return View();
         }
 
-       
+
     }
 }

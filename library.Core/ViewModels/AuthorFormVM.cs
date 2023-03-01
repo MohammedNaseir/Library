@@ -5,13 +5,13 @@ using System.ComponentModel.DataAnnotations;
 
 namespace library.Core.ViewModels
 {
-    public class CategoryVM
+    public class AuthorFormVM
     {
-        // this Category Form View Model
+        // this Author Form View Model
         public int Id { get; set; }
 
         [MaxLength(50, ErrorMessage = Errors.MaxLength), Display(Name = "Author")]
-        [Remote("AllowItem", null, AdditionalFields = ("Id"), ErrorMessage = Errors.Duplicated)]
+        [Remote("AllowItem", null, AdditionalFields = ("Id"), ErrorMessage = "category wirh name Isexists")]
         public string? Name { get; set; }
 
     }

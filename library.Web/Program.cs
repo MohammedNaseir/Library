@@ -1,7 +1,6 @@
-using library.Data;
 using library.Infrastructure.AutoMapper;
+using library.Infrastructure.Services.Authors;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,7 +16,8 @@ builder.Services.AddControllersWithViews();
 //mapper
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MapperProfile)));
 // Configure My Services 
-builder.Services.AddScoped<ICategoryService,CategoryService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IAuthorService, AuthorService>();
 
 
 var app = builder.Build();

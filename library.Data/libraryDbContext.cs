@@ -6,11 +6,13 @@ namespace library.Data
 {
     public class libraryDbContext : IdentityDbContext
     {
-        public libraryDbContext(DbContextOptions<libraryDbContext> options):base(options)
+        public libraryDbContext(DbContextOptions<libraryDbContext> options) : base(options)
         {
         }
 
         public DbSet<Category> Categories { get; set; }
-       
+        public DbSet<Author> Authors { get; set; }
+        public DbSet<Book> Books { get; set; } 
+
     }
 }

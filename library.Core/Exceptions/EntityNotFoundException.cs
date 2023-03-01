@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace library.Core.Exceptions
+﻿namespace library.Core.Exceptions
 {
-    public class EntityNotFoundException:Exception
+    public class EntityNotFoundException : Exception
     {
-        public EntityNotFoundException() : base("Item not Found") 
+        public EntityNotFoundException() : base("Item not Found")
         {
 
         }
