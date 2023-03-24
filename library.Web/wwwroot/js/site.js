@@ -52,16 +52,18 @@ function showErrorMessage(message = 'Something went wrong!') {
 }
 function onModalSuccess(row) {
     showSuccessMessage();
-    $('#Modal').modal('hide');    
+    $('#Modal').modal('hide');
+
     if (updatedRow !== undefined) {
-       datatable.row(updatedRow).remove().draw();
+        datatable.row(updatedRow).remove().draw();
         updatedRow = undefined;
     }
     var newRow = $(row);
     datatable.row.add(newRow).draw();
     KTMenu.init();
-    KTMenu.initGlobalHandlers();
+    KTMenu.initHandlers();
 }
+
 //DataTables
 var headers = $('th');
 $.each(headers, function (i) {
@@ -149,6 +151,27 @@ var KTDatatables = function () {
 }();
 
 $(document).ready(function () {
+    //select 
+    $('.js-select2').select2();
+
+    //DatePicker
+    $('.js-datepiker').daterangepicker({
+        singleDatePicker: true,
+        autoApplay: true,
+        drops: 'up',
+        maxDate: new Date()
+    });
+
+    //Tinymce
+    var options = { selector: ".js-tinymce", height: "420" };
+    if (KTThemeMode.getMode() === "dark") {
+        options["skin"] = "oxide-dark";
+        options["content_css"] = "dark";
+    }
+    tinymce.init(options);
+
+    
+
     //sweet Alert
     var message = $('#Message').text();
     if (message !== '') {

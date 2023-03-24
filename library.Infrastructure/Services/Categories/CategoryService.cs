@@ -35,17 +35,12 @@ namespace library.Infrastructure.Services.Categories
 
         public async Task<CategoryVM> Get(int Id)
         {
-            var category = await _db.Categories.SingleOrDefaultAsync(x => x.Id == Id && !x.IsDeleted);
+            var category = await _db.Categories.SingleOrDefaultAsync(x => x.Id == Id /*&& !x.IsDeleted*/);
             if (category == null)
             {
                 throw new EntityNotFoundException();
             }
             var categoryVM = _mapper.Map<CategoryVM>(category);
-            //CategoryVM categoryVM = new CategoryVM
-            //{
-            //    Id = category.Id,
-            //    Name = category.Name
-            //};
             return (categoryVM);
         }
 
@@ -73,6 +68,10 @@ namespace library.Infrastructure.Services.Categories
         public Category IsCategoryExists(CategoryVM category)
         {
             return _db.Categories.SingleOrDefault(x => x.Name == category.Name);
+        }
+        public void SaveChanges()
+        {
+            _db.SaveChanges();
         }
     }
 }

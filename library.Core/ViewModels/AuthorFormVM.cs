@@ -11,7 +11,7 @@ namespace library.Core.ViewModels
         public int Id { get; set; }
 
         [MaxLength(50, ErrorMessage = Errors.MaxLength), Display(Name = "Author")]
-        [Remote("AllowItem", null, AdditionalFields = ("Id"), ErrorMessage = "category wirh name Isexists")]
+        [Remote("AllowItem", null, AdditionalFields = ("Id"), ErrorMessage = Errors.Duplicated)]
         public string? Name { get; set; }
 
     }

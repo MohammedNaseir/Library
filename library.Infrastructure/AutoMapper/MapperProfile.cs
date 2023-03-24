@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using library.Core.ViewModels;
 using library.Data.Models;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace library.Infrastructure.AutoMapper
 {
@@ -10,12 +11,23 @@ namespace library.Infrastructure.AutoMapper
         {
             //Category
             CreateMap<Category, CategoryViewModel>();
+            CreateMap<Category, CategoryVM>().ReverseMap();
             //.ForMember(dest =>dest.Name,opt=>opt.MapFrom(src=>src.Name));
-            CreateMap<CategoryVM, Category>().ReverseMap();
+            CreateMap<Category, SelectListItem>()
+                  .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Id))
+                  .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Name));
 
-            //Author
+            //Authors
             CreateMap<Author, AuthorViewModel>();
             CreateMap<AuthorFormVM, Author>().ReverseMap();
+            CreateMap<Author, SelectListItem>()
+                .ForMember(dest => dest.Value, opt => opt.MapFrom(src => src.Id))
+                .ForMember(dest => dest.Text, opt => opt.MapFrom(src => src.Name));
+
+            //Books
+            CreateMap<BookFormVM,Book>()
+                .ReverseMap()
+                .ForMember(dest => dest.Categories, opt => opt.Ignore());
 
         }
     }

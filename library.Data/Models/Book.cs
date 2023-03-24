@@ -1,13 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace library.Data.Models
 {
-    [Index(nameof(Title),nameof(AuthorId),IsUnique =true)]
+    [Index(nameof(Title), nameof(AuthorId), IsUnique = true)]
     public class Book : BaseModel
     {
         public int Id { get; set; }

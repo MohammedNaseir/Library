@@ -1,7 +1,9 @@
 using library.Infrastructure.AutoMapper;
 using library.Infrastructure.Services.Authors;
+using library.Infrastructure.Services.Books;
 using Microsoft.AspNetCore.Identity;
 using System.Reflection;
+using UoN.ExpressiveAnnotations.NetCore.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -12,12 +14,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<libraryDbContext>();
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddExpressiveAnnotations();
 //mapper
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MapperProfile)));
 // Configure My Services 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
+builder.Services.AddScoped<IBookService, BookService>();
+
 
 
 var app = builder.Build();

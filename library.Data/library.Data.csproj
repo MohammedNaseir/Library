@@ -26,8 +26,4 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\library.Core\library.Core.csproj" />
-  </ItemGroup>
-
 </Project>

@@ -29,8 +29,7 @@ namespace library.Infrastructure.Services.Authors
 
         public Author GetAuthor(int Id)
         {
-            var Author = _db.Authors.FirstOrDefault(c => c.Id == Id);
-            return Author;
+            return _db.Authors.FirstOrDefault(c => c.Id == Id); ;
         }
 
         public async Task<AuthorFormVM> Get(int Id)
@@ -41,11 +40,7 @@ namespace library.Infrastructure.Services.Authors
                 throw new EntityNotFoundException();
             }
             var AuthorVM = _mapper.Map<AuthorFormVM>(Author);
-            //AuthorVM AuthorVM = new AuthorVM
-            //{
-            //    Id = Author.Id,
-            //    Name = Author.Name
-            //};
+            
             return (AuthorVM);
         }
 
@@ -73,6 +68,10 @@ namespace library.Infrastructure.Services.Authors
         public Author IsAuthorExists(AuthorFormVM Author)
         {
             return _db.Authors.SingleOrDefault(x => x.Name == Author.Name);
+        }
+        public void SaveChanges()
+        {
+            _db.SaveChanges();
         }
     }
 }

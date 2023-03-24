@@ -12,5 +12,6 @@ namespace library.Infrastructure.Services.Authors
         Task<IEnumerable<AuthorViewModel>> GetAuthorList();
         Author GetAuthor(int Id);
         Author IsAuthorExists(AuthorFormVM author);
+        void SaveChanges();
     }
 }

@@ -11,5 +11,6 @@ namespace library.Infrastructure.Services.Categories
         Task<IEnumerable<CategoryViewModel>> GetCategoryList();
         Category GetCategory(int Id);
         Category IsCategoryExists(CategoryVM category);
+        void SaveChanges();
     }
 }
