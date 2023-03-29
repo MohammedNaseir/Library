@@ -17,6 +17,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddExpressiveAnnotations();
 //mapper
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MapperProfile)));
+builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(nameof(CloudinarySettings)));
 // Configure My Services 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();

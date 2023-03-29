@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using library.Data;
 
@@ -11,9 +12,10 @@ using library.Data;
 namespace library.Data.Migrations
 {
     [DbContext(typeof(libraryDbContext))]
-    partial class libraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230329004256_ImageThumbnailUrlToBooks")]
+    partial class ImageThumbnailUrlToBooks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -71,9 +73,6 @@ namespace library.Data.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
-
-                    b.Property<string>("ImagePublicID")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImageThumbnailUrl")
                         .HasColumnType("nvarchar(max)");

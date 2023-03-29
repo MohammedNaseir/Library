@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Book Form";
 }
-
+@*
 <div class="alert bg-light-primary border border-primary border-3 border-dashed d-flex justify-content-between w-100 p-5 mb-10">
     <div class="d-flex align-items-center">
         <div class="symbol symbol-40px me-4">
@@ -22,8 +22,11 @@
         <!--end::Content-->
     </div>
 </div>
-
+*@
 <div class="card shadow-sm">
+    <div class="card-header">
+        <h3 class="card-title">@(Model.Id.Equals(0) ? "Add" : "Edit") Book</h3>
+    </div>
     <div class="card-body">
         <form method="post" asp-controller="Books" enctype="multipart/form-data">
             @if (Model.Id > 0)
@@ -32,8 +35,9 @@
             }
             <div class="row">
                 <div class="col-md-5">
+                    <div class="mb-10">
                     <!--begin::Image input-->
-                    <div class="image-input image-input-empty mb-10" data-kt-image-input="true" style="background-image: url(/images/@(string.IsNullOrEmpty(Model.ImageUrl) ? "image-placeholder.jpg" : $"/books/{Model.ImageUrl}"))">
+                        <div class="image-input image-input-empty" data-kt-image-input="true" style="background-image: url(@(string.IsNullOrEmpty(Model.ImageUrl) ? "/images/image-placeholder.jpg" : Model.ImageThumbnailUrl))">
                         <!--begin::Image preview wrapper-->
                         <div class="image-input-wrapper w-125px h-200px"></div>
                         <!--end::Image preview wrapper-->
@@ -64,15 +68,17 @@
                         </span>
                         <!--end::Remove button-->
                     </div>
+                    <div class="form-text"> Allowed file types: png , jpg , jpge and cannot be more 2mg</div>
                     <span asp-validation-for="Image" class="text-danger d-block"></span>
                     <!--end::Image input-->
-                    
+                    </div>
+
                     <!--begin::Title input-->
                     <div class="row">
                         <div class="col">
                             <div class="mb-5">
                                 <div class="form-floating mb-2">
-                                    <input type="text" class="form-control" placeholder="Title" asp-for="Title" />
+                                    <input type="text" class="form-control form-control-soild" placeholder="Title" asp-for="Title" />
                                     <label asp-for="Title"></label>
                                 </div>
                                 <span asp-validation-for="Title" class="text-danger d-block"></span>
@@ -86,7 +92,7 @@
                         <div class="col">
                             <div class="mb-5">
                                 <div class="form-floating mb-2">
-                                    <select class="form-select js-select2" data-placeholder="Select an author"
+                                    <select class="form-select form-select-soild js-select2" data-placeholder="Select an author"
                                             asp-for="AuthorId" asp-items="@Model.Authors">
                                         <option value="">Select an author</option>
                                     </select>
@@ -103,7 +109,7 @@
                         <div class="col">
                             <div class="mb-5">
                                 <div class="mb-2">
-                                    <select class="form-select js-select2" asp-for="SelectedCategories"
+                                    <select class="form-select form-select-soild js-select2" asp-for="SelectedCategories"
                                             data-placeholder="Select Categories"
                                             asp-items="@Model.Categories">
                                         <option>Select categories</option>
@@ -120,7 +126,7 @@
                         <div class="col">
                             <div class="mb-5">
                                 <div class="form-floating mb-2">
-                                    <input type="text" class="form-control" placeholder="Publisher" asp-for="Publisher" />
+                                    <input type="text" class="form-control form-control-soild" placeholder="Publisher" asp-for="Publisher" />
                                     <label asp-for="Publisher"></label>
                                 </div>
                                 <span asp-validation-for="Publisher" class="text-danger d-block"></span>
@@ -134,7 +140,7 @@
                         <div class="col">
                             <div class="mb-5">
                                 <div class="form-floating mb-2">
-                                    <input type="text" class="form-control js-datepiker" placeholder="Publishing Date" asp-for="PublishingDate" />
+                                    <input type="text" class="form-control form-control-soild js-datepiker" placeholder="Publishing Date" asp-for="PublishingDate" />
                                     <label asp-for="PublishingDate"></label>
                                 </div>
                                 <span asp-validation-for="PublishingDate" class="text-danger d-block"></span>
@@ -146,7 +152,7 @@
                     <!--begin::IsAvailableForRental input-->
                     <div class="row mb-2">
                         <div class="col">
-                            <div class="form-check form-switch mb-2">
+                            <div class="form-check form-switch form-check-solid form-check-custom mb-2">
                                 <input class="form-check-input" type="checkbox" asp-for="IsAvailableForRental">
                                 <label class="form-check-label" asp-for="IsAvailableForRental"></label>
                             </div>
@@ -159,7 +165,7 @@
                         <div class="col">
                             <div class="mb-5">
                                 <div class="form-floating mb-2">
-                                    <input type="text" class="form-control" placeholder="Hall" asp-for="Hall" />
+                                    <input type="text" class="form-control form-control-soild" placeholder="Hall" asp-for="Hall" />
                                     <label asp-for="Hall"></label>
                                 </div>
                                 <span asp-validation-for="Hall" class="text-danger d-block"></span>
@@ -175,7 +181,7 @@
                     <!--begin::Description input-->
                     <div class="mb-5">
                         <div class="form-floating mb-2">
-                            <textarea class="form-control js-tinymce" placeholder="Description" asp-for="Description"></textarea>
+                            <textarea class="form-control form-control-soild js-tinymce" placeholder="Description" asp-for="Description"></textarea>
                             <label asp-for="Description"></label>
                         </div>
                         <span asp-validation-for="Description" class="text-danger d-block"></span>
@@ -183,15 +189,18 @@
                     <!--end::Description input-->
                 </div>
             </div>
-      
-            <button type="submit" class="btn btn-primary">
-                <span class="indicator-label">
-                    Save
-                </span>
-                <span class="indicator-progress">
-                    Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
-                </span>
-            </button>
+      <div class="card-footer">
+                <button type="submit" class="btn btn-primary">
+                    <span class="indicator-label">
+                        Save
+                    </span>
+                    <span class="indicator-progress">
+                        Please wait... <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+                    </span>
+                </button>
+                <a class="btn btn-light text-priamry ms-3" asp-action="Index">Cancel</a>
+      </div>
+            
         </form>
     </div>
 </div>
@@ -211,7 +220,7 @@
                             <img id="ImagePreview" src="~/images/books/@(Model.ImageUrl is null ? "no-book.jpg" : Model.ImageUrl)" class="img-thumbnail" alt="Book Image">
                         </div>
                         <div class="form-floating mb-2">
-                            <input type="file" class="form-control"  placeholder="Image"
+                            <input type="file" class="form-control form-control-soild"  placeholder="Image"
                             asp-for="Image"
                             accept=".jpg,.jpeg,.png"
                             onchange="document.getElementById('ImagePreview').src = window.URL.createObjectURL(this.files[0])" />

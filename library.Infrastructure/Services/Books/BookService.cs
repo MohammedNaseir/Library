@@ -10,6 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using CloudinaryDotNet;
+using Microsoft.Extensions.Options;
+using library.Infrastructure.Settings;
 
 namespace library.Infrastructure.Services.Books
 {
@@ -17,12 +20,21 @@ namespace library.Infrastructure.Services.Books
     {
         private readonly IMapper _mapper;
         private readonly libraryDbContext _db;
-       
-        
-        public BookService(libraryDbContext db, IMapper mapper)
+        private readonly Cloudinary _cloudinary;
+
+        public BookService(libraryDbContext db, IMapper mapper, 
+           IOptions<CloudinarySettings> cloudinary)
         {
             _db = db;
             _mapper = mapper;
+            Account account = new()
+            {
+                Cloud = cloudinary.Value.Cloud,
+                ApiKey = cloudinary.Value.ApiKey,
+                ApiSecret = cloudinary.Value.ApiSecret
+            };
+
+            _cloudinary = new Cloudinary(account);
         }
 
         public void Create(BookFormVM bookFormVM)
@@ -45,6 +57,7 @@ namespace library.Infrastructure.Services.Books
             // to map selected catefories        
             //book = _mapper.Map(bookFormVM, book);
             book.LastUpdatedOn = DateTime.Now;
+            //book.ImageUrl=
             foreach (var category in model.SelectedCategories)
             {
                 book.Categories.Add(new BookCategory { CategoryId = category });

@@ -34,8 +34,11 @@ function showSuccessMessage() {
     //});
 
 }
+function disableSubmitButton() {
+    $('body :submit').attr('disable', 'disable').attr('data-kt-indicator', 'on');
+}
 function onModalBegin() {
-    $('body :submit').attr('disable', 'disable').attr('data-kt-indicator','on');
+    disableSubmitButton();
 }
 function onModalComplete() {
     $('body :submit').removeAttr('disable').removeAttr('data-kt-indicator');
@@ -151,9 +154,25 @@ var KTDatatables = function () {
 }();
 
 $(document).ready(function () {
-    //select 
-    $('.js-select2').select2();
+    //Disable sumbit button
+    $('form').on('submit', function () {
+        if ($(".js-tinymce").length > 0) {
+            $(".js-tinymce").each(function () {
+                var input = $(this);
+                var content = tinyMCE.get(input.attr('id')).getContent();
+                input.val(content)
+            });
+        }
+        var isValid = $(this).valid();
+        if(isValid) disableSubmitButton()
+    });
 
+    //select
+    $('.js-select2').select2();
+    $('.js-select2').on('select2:select', function (e) {
+        var select = $(this);
+        $('form').validate().element('#'+select.attr('id'));
+    });
     //DatePicker
     $('.js-datepiker').daterangepicker({
         singleDatePicker: true,
@@ -163,15 +182,15 @@ $(document).ready(function () {
     });
 
     //Tinymce
-    var options = { selector: ".js-tinymce", height: "420" };
-    if (KTThemeMode.getMode() === "dark") {
-        options["skin"] = "oxide-dark";
-        options["content_css"] = "dark";
+    if ($(".js-tinymce").length > 0) {
+        var options = { selector: ".js-tinymce", height: "420" };
+        if (KTThemeMode.getMode() === "dark") {
+            options["skin"] = "oxide-dark";
+            options["content_css"] = "dark";
+        }
+        tinymce.init(options);
     }
-    tinymce.init(options);
-
     
-
     //sweet Alert
     var message = $('#Message').text();
     if (message !== '') {

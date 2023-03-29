@@ -4,7 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>aspnet-library.Web-861c18cc-1e76-4f98-88ac-f0fda5f1f1cd</UserSecretsId>
+    <UserSecretsId>861c18cc-1e76-4f98-88ac-f0fda5f1f1cd</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,6 +15,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="6.0.11" />
+    <PackageReference Include="SixLabors.ImageSharp.Web" Version="2.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\images\books\" />
+    <Folder Include="wwwroot\images\books\thumb\" />
   </ItemGroup>
 
 </Project>
