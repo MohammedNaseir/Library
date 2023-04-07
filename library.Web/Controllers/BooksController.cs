@@ -38,6 +38,14 @@ namespace library.Web.Controllers
             return View();
         }
 
+        public IActionResult Details(int id)
+        {
+            var bookVM = _bookService.GetBookViewModel(id);
+            if (bookVM is null)
+                return NotFound();
+            return View(bookVM);
+        }
+
         [HttpGet]
         public IActionResult Create()
         {           
@@ -102,10 +110,9 @@ namespace library.Web.Controllers
             //else if (!string.IsNullOrEmpty(model.ImageUrl))
             //    model.ImageUrl = boo;
 
-            _bookService.Create(model);         
-            return RedirectToAction(nameof(Index)); 
+            int BookId = _bookService.Create(model);         
+            return RedirectToAction(nameof(Details),new { id= BookId}); 
         }
-        
         
         
         [HttpGet]
@@ -120,7 +127,6 @@ namespace library.Web.Controllers
             viewModel.SelectedCategories=book.Categories.Select(c=>c.CategoryId).ToList();
             return View("Form", viewModel);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -204,7 +210,7 @@ namespace library.Web.Controllers
             }
 
             _bookService.Update(model);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Index), new { id = book.Id });
         }
 
         private BookFormVM PopulateViweModel(BookFormVM? model=null)

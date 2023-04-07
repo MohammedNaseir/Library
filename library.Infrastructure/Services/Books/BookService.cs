@@ -37,7 +37,7 @@ namespace library.Infrastructure.Services.Books
             _cloudinary = new Cloudinary(account);
         }
 
-        public void Create(BookFormVM bookFormVM)
+        public int Create(BookFormVM bookFormVM)
         {
             var book = _mapper.Map<Book>(bookFormVM);
             // to map selected catefories
@@ -47,6 +47,7 @@ namespace library.Infrastructure.Services.Books
             }
             _db.Add(book);
             _db.SaveChanges();
+            return (book.Id);
         }
         
         
@@ -94,6 +95,16 @@ namespace library.Infrastructure.Services.Books
         {
             return _db.Books.SingleOrDefault(x => x.Title == book.Title
             && x.AuthorId ==book.AuthorId);
+        }
+        public BookViewModel GetBookViewModel(int id)
+        {
+            var book = _db.Books
+                .Include(x => x.Author)
+                .Include(x=>x.Categories)
+                .ThenInclude(x=>x.Category)
+                .SingleOrDefault(x => x.Id == id);
+            var bookVM=_mapper.Map<BookViewModel>(book);
+            return bookVM;
         }
     }
 }

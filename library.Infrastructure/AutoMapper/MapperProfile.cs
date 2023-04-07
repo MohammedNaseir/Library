@@ -28,7 +28,9 @@ namespace library.Infrastructure.AutoMapper
             CreateMap<BookFormVM,Book>()
                 .ReverseMap()
                 .ForMember(dest => dest.Categories, opt => opt.Ignore());
-
+            CreateMap<Book, BookViewModel>()
+               .ForMember(dest => dest.Author, opt => opt.MapFrom(src => src.Author!.Name))
+               .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.Categories.Select(c=>c.Category!.Name).ToList()));
         }
     }
 }

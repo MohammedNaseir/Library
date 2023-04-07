@@ -13,11 +13,12 @@ namespace library.Infrastructure.Services.Books
     {
         IEnumerable<SelectListItem> GetAuthors();
         IEnumerable<SelectListItem> GetCategories();
-        void Create(BookFormVM bookFormVM);
+        int Create(BookFormVM bookFormVM);
         void Update(BookFormVM bookFormVM);
         Book GetBook(int id);
         BookFormVM EditBookGet(Book book);
         Book IsBookExists(BookFormVM book);
+        BookViewModel GetBookViewModel(int id);
 
 
     }
