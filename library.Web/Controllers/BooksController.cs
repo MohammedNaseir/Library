@@ -7,6 +7,7 @@ using library.Infrastructure.Services.Books;
 using Microsoft.Extensions.Options;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
+using System.Linq.Dynamic.Core;
 
 namespace library.Web.Controllers
 {
@@ -38,6 +39,33 @@ namespace library.Web.Controllers
             return View();
         }
 
+        [HttpPost] 
+        public IActionResult GetBooks()
+        {
+            var skip = int.Parse(Request.Form["start"]);         
+            var pageSize = int.Parse(Request.Form["length"]);
+           
+            var serarcValue = Request.Form["search[value]"];
+            
+            var sortColumnIndex = Request.Form[ "order[0][column]"];
+            var sortColumn = Request.Form[$"columns[{sortColumnIndex}][name]"];
+            var sortColumnDirection = Request.Form["order[0][dir]"];
+
+            IQueryable<Book> books = _bookService.GetBooks();
+            if(!string.IsNullOrEmpty(serarcValue))
+                books = books.Where(x => x.Title.Contains(serarcValue) || x.Author!.Name.Contains(serarcValue));
+            books = books.OrderBy($"{sortColumn} {sortColumnDirection}");
+            var data = books.Skip(skip).Take(pageSize).ToList();
+            var mappedData = _bookService.BookMap(data);
+            var recordsTotal = books.Count();
+            var jsonData = new
+            {                     
+                recordsFiltered = recordsTotal,
+                recordsTotal,
+                data = mappedData
+            };
+            return Ok(jsonData);
+        }
         public IActionResult Details(int id)
         {
             var bookVM = _bookService.GetBookViewModel(id);
@@ -210,7 +238,7 @@ namespace library.Web.Controllers
             }
 
             _bookService.Update(model);
-            return RedirectToAction(nameof(Index), new { id = book.Id });
+            return RedirectToAction(nameof(Details), new { id = book.Id });
         }
 
         private BookFormVM PopulateViweModel(BookFormVM? model=null)
@@ -219,6 +247,20 @@ namespace library.Web.Controllers
             viewModel.Authors  = _bookService.GetAuthors();
             viewModel.Categories = _bookService.GetCategories();            
             return viewModel;       
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ToggleStatus(int id)
+        {
+            var book = _bookService.GetBook(id);
+            if (book is null)
+                return NotFound();
+            book.IsDeleted = !book.IsDeleted;
+            book.LastUpdatedOn = DateTime.Now;
+
+            _bookService.SaveChanges();
+            return Ok();
         }
         public IActionResult AllowItem(BookFormVM model)
         {

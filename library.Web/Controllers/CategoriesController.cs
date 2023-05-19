@@ -64,6 +64,7 @@ namespace library.Web.Controllers
                 return NotFound();
             category.IsDeleted = !category.IsDeleted;
             category.LastUpdatedOn = DateTime.Now;
+         
             _categoryService.SaveChanges();
             return Ok(category.LastUpdatedOn.ToString());
         }

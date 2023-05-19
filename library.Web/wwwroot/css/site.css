@@ -36,3 +36,13 @@ body {
     border: 0;
     -webkit-appearance: none;
 }
+
+/*start custom styles */
+.dt-spinner + div {
+    display:none !important;
+}
+.h-70px {
+    height: 70px !important;
+}
+/*end custom styles */
+

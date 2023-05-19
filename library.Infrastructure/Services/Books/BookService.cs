@@ -106,5 +106,20 @@ namespace library.Infrastructure.Services.Books
             var bookVM=_mapper.Map<BookViewModel>(book);
             return bookVM;
         }
+        public IQueryable<Book> GetBooks()
+        {
+            return _db.Books
+                .Include(b => b.Author)
+                .Include(b => b.Categories)
+                .ThenInclude(c => c.Category);
+        }
+        public void SaveChanges()
+        {
+            _db.SaveChanges();
+        }
+        public IEnumerable<BookViewModel> BookMap(List<Book> Books)
+        {
+            return _mapper.Map<IEnumerable<BookViewModel>>(Books);
+        }
     }
 }
