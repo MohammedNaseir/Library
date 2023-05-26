@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using library.Data;
 
@@ -11,9 +12,10 @@ using library.Data;
 namespace library.Data.Migrations
 {
     [DbContext(typeof(libraryDbContext))]
-    partial class libraryDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230520144207_AddBookCopiesTable")]
+    partial class AddBookCopiesTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

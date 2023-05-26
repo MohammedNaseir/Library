@@ -1,6 +1,7 @@
 using library.Infrastructure.AutoMapper;
 using library.Infrastructure.Services.Authors;
 using library.Infrastructure.Services.Books;
+using library.Infrastructure.Services.Copies;
 using Microsoft.AspNetCore.Identity;
 using System.Reflection;
 using UoN.ExpressiveAnnotations.NetCore.DependencyInjection;
@@ -22,6 +23,7 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
+builder.Services.AddScoped<ICopyService, CopyService>();
 
 
 
