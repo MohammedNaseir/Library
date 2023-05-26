@@ -8,6 +8,7 @@
         public const string MaxSize = "File Cannot be more that 2 MG";
         public const string DuplicatedBook = "Book with the same title wirh the same author";
         public const string NotAllowFutureDates = "Date Cannot be in the future ";
+        public const string invalidEditionNumber = "{0} should be between {1} and {2}";
 
 
 

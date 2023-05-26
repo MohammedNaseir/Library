@@ -100,6 +100,7 @@ namespace library.Infrastructure.Services.Books
         {
             var book = _db.Books
                 .Include(x => x.Author)
+                .Include(b => b.Copies)
                 .Include(x=>x.Categories)
                 .ThenInclude(x=>x.Category)
                 .SingleOrDefault(x => x.Id == id);
