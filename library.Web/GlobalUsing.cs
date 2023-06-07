@@ -5,3 +5,7 @@ global using library.Web.Filters;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using library.Infrastructure.Settings;
+global using Microsoft.AspNetCore.Authorization;
+global using library.Core.Constants;
+
+

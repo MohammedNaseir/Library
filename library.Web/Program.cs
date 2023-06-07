@@ -4,9 +4,12 @@ using library.Infrastructure.AutoMapper;
 using library.Infrastructure.Services.Authors;
 using library.Infrastructure.Services.Books;
 using library.Infrastructure.Services.Copies;
+using library.Web;
 using Microsoft.AspNetCore.Identity;
 using System.Reflection;
 using UoN.ExpressiveAnnotations.NetCore.DependencyInjection;
+using Microsoft.EntityFrameworkCore;
+using library.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -14,10 +17,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<libraryDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-//builder.Services.AddDefaultIdentity<ApplicationUser>(
-//    options => options.SignIn.RequireConfirmedAccount = true)
+//builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
 //    .AddEntityFrameworkStores<libraryDbContext>();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
