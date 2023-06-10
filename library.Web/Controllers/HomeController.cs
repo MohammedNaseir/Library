@@ -9,11 +9,13 @@ namespace library.Web.Controllers
         {
 
         }
+        
         [AllowAnonymous]
         public IActionResult Index()
         {
             return View();
         }
+        
         [Authorize]
         public IActionResult Privacy()
         {

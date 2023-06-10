@@ -21,7 +21,7 @@ namespace library.Core.Seeds
                 FullName="Admin Mohammed",
                 
             };
-            var user = await userManager.FindByNameAsync(admin.UserName);
+            var user = await userManager.FindByEmailAsync(admin.Email);
             if(user == null)
             {
                 await userManager.CreateAsync(admin,"P@ssword123");

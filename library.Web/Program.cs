@@ -10,6 +10,7 @@ using System.Reflection;
 using UoN.ExpressiveAnnotations.NetCore.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using library.Data;
+using library.Infrastructure.Services.Users;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -41,6 +42,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<ICopyService, CopyService>();
+builder.Services.AddScoped<IUser, UserService>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

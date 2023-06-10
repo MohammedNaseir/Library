@@ -35,6 +35,10 @@ namespace library.Infrastructure.AutoMapper
             CreateMap<BookCopy, BookCopyViewModel>()
               .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book!.Title));
             CreateMap<BookCopy, BookCopyFormViewModel>();
+
+            //users
+            CreateMap<ApplicationUser, UserViewModel>();
+
         }
     }
 }

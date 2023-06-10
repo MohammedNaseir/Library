@@ -155,7 +155,7 @@ var KTDatatables = function () {
 
 $(document).ready(function () {
     //Disable sumbit button
-    $('form').on('submit', function () {
+    $('form').not('#signout').on('submit', function () {
         if ($(".js-tinymce").length > 0) {
             $(".js-tinymce").each(function () {
                 var input = $(this);
@@ -261,7 +261,14 @@ $(document).ready(function () {
             }
         });
     });
+
+    // handle signout
+    $('.js-signout').on('click', function () {
+        $('#signout').submit();
+    });
 });
+
+
 //before efit to datatable
 //function onModalSuccess(item) {
 //    showSuccessMessage();
