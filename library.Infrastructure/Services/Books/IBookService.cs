@@ -14,7 +14,7 @@ namespace library.Infrastructure.Services.Books
         IEnumerable<SelectListItem> GetAuthors();
         IEnumerable<SelectListItem> GetCategories();
         IQueryable<Book> GetBooks();
-        int Create(BookFormVM bookFormVM);
+        int Create(BookFormVM bookFormVM, string claim);
         void Update(BookFormVM bookFormVM);
         Book GetBook(int id);
         BookFormVM EditBookGet(Book book);

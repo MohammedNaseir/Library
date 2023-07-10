@@ -65,6 +65,7 @@ namespace library.Web.Controllers
                 return NotFound();
             author.IsDeleted = !author.IsDeleted;
             author.LastUpdatedOn = DateTime.Now;
+            author.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             _authorService.SaveChanges();
             return Ok(author.LastUpdatedOn.ToString());
         }

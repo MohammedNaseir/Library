@@ -137,8 +137,8 @@ namespace library.Web.Controllers
             }
             //else if (!string.IsNullOrEmpty(model.ImageUrl))
             //    model.ImageUrl = boo;
-
-            int BookId = _bookService.Create(model);         
+            var claim = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            int BookId = _bookService.Create(model,claim);         
             return RedirectToAction(nameof(Details),new { id= BookId}); 
         }
         

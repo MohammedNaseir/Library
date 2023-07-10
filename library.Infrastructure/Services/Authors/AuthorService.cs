@@ -21,6 +21,7 @@ namespace library.Infrastructure.Services.Authors
         {
 
             var Author = _mapper.Map<Author>(author);
+            
             await _db.Authors.AddAsync(Author);
             await _db.SaveChangesAsync();
             var viewModel = _mapper.Map<AuthorViewModel>(Author);
