@@ -2,6 +2,7 @@
 
 namespace library.Web.Controllers
 {
+    [Authorize(Roles = AppRoles.Archive)]
     public class AuthorsController : Controller
     {
         private readonly IAuthorService _authorService;
@@ -65,6 +66,7 @@ namespace library.Web.Controllers
                 return NotFound();
             author.IsDeleted = !author.IsDeleted;
             author.LastUpdatedOn = DateTime.Now;
+            author.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             _authorService.SaveChanges();
             return Ok(author.LastUpdatedOn.ToString());
         }

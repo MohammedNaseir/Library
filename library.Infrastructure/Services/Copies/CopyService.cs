@@ -47,12 +47,13 @@ namespace library.Infrastructure.Services.Copies
             viewModel.ShowRentalInput = copy.Book!.IsAvailableForRental;
             return viewModel;       
         }
-        public BookCopyViewModel UpdatePost(BookCopyFormViewModel model)
+        public BookCopyViewModel UpdatePost(BookCopyFormViewModel model, string claimvalue)
         {
             var copy = _db.BookCopies.Include(c => c.Book).SingleOrDefault(c => c.Id == model.Id);
             copy.IsAvailableForRental = copy.Book!.IsAvailableForRental && model.IsAvailableForRental;
             copy.EditionNumber = model.EditionNumber;
             copy.LastUpdatedOn=DateTime.Now;
+            copy.LastUpdatedById = claimvalue;
             _db.SaveChanges();
             return _mapper.Map<BookCopyViewModel>(copy);
 

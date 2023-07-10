@@ -15,6 +15,6 @@ namespace library.Infrastructure.Services.Copies
         public Book GetBook(int Id);
         public BookCopyViewModel Create(BookCopy bookCopy);
         public BookCopyFormViewModel Edit(int id);
-        public BookCopyViewModel UpdatePost(BookCopyFormViewModel model);
+        public BookCopyViewModel UpdatePost(BookCopyFormViewModel model, string claimvalue);
     }
 }

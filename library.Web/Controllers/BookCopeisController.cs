@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace library.Web.Controllers
 {
+    [Authorize(Roles = AppRoles.Archive)]
     public class BookCopeisController : Controller
     {
         private readonly ICopyService _copyService;
@@ -11,8 +12,7 @@ namespace library.Web.Controllers
         {
             _copyService = copyService;
         }
-        
-        
+
         
         [AjaxOnly]
         public IActionResult Create(int bookId)
@@ -44,7 +44,9 @@ namespace library.Web.Controllers
             {
                 EditionNumber = model.EditionNumber,
                 IsAvailableForRental = book.IsAvailableForRental ? model.IsAvailableForRental :false
+                ,CreatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value
             };
+            
             book.Copies.Add(copy);
             _copyService.SaveChanges();
             return PartialView("_BookCopyRow", _copyService.Create(copy));
@@ -65,7 +67,8 @@ namespace library.Web.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest();
-            var copy = _copyService.UpdatePost(model);
+            var claimvalue = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            var copy = _copyService.UpdatePost(model,claimvalue);
             if (copy == null)
                 return NotFound();
             return PartialView("_BookCopyRow",copy);
@@ -81,6 +84,8 @@ namespace library.Web.Controllers
                 return NotFound();
             copy.IsDeleted = !copy.IsDeleted;
             copy.LastUpdatedOn = DateTime.Now;
+            copy.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            
             _copyService.SaveChanges();
             return Ok(copy.LastUpdatedOn.ToString());
         }

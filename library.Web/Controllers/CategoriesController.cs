@@ -1,6 +1,8 @@
 ﻿
 namespace library.Web.Controllers
 {
+    [Authorize(Roles = AppRoles.Archive)]
+
     public class CategoriesController : Controller
     {
         private readonly ICategoryService _categoryService;
@@ -64,7 +66,7 @@ namespace library.Web.Controllers
                 return NotFound();
             category.IsDeleted = !category.IsDeleted;
             category.LastUpdatedOn = DateTime.Now;
-         
+            category.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
             _categoryService.SaveChanges();
             return Ok(category.LastUpdatedOn.ToString());
         }

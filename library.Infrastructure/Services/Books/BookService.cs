@@ -37,14 +37,16 @@ namespace library.Infrastructure.Services.Books
             _cloudinary = new Cloudinary(account);
         }
 
-        public int Create(BookFormVM bookFormVM)
+        public int Create(BookFormVM bookFormVM,string claim)
         {
             var book = _mapper.Map<Book>(bookFormVM);
+            
             // to map selected catefories
             foreach (var category in bookFormVM.SelectedCategories)
             {
                 book.Categories.Add(new BookCategory { CategoryId = category });
             }
+            book.CreatedById = claim;
             _db.Add(book);
             _db.SaveChanges();
             return (book.Id);
@@ -63,11 +65,19 @@ namespace library.Infrastructure.Services.Books
             {
                 book.Categories.Add(new BookCategory { CategoryId = category });
             }
+            // to change availabity when changeing avalible in Book automaticlly
+            if (!model.IsAvailableForRental)
+                foreach (var copy in book.Copies)
+                    copy.IsAvailableForRental = false;
             _db.SaveChanges();
         }
         public Book GetBook(int id)
         {
-            return _db.Books.Include(x=>x.Categories).SingleOrDefault(x => x.Id == id);
+            return _db.Books
+                .Include(x => x.Categories)
+                .Include(x => x.Copies)
+                .SingleOrDefault(x => x.Id == id);
+              
         }
         public BookFormVM EditBookGet(Book book)
         { 

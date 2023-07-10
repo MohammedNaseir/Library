@@ -1,10 +1,11 @@
 ﻿using library.Data.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace library.Data
 {
-    public class libraryDbContext : IdentityDbContext
+    public class libraryDbContext : IdentityDbContext<ApplicationUser>
     {
         public libraryDbContext(DbContextOptions<libraryDbContext> options) : base(options)
         {
@@ -28,6 +29,16 @@ namespace library.Data
             //define key from 2 attr (compsite key)
             builder.Entity<BookCategory>().HasKey(e => new { e.BookId, e.CategoryId });
             base.OnModelCreating(builder);
+
+            //change tables name
+            builder.Entity<ApplicationUser>().ToTable("Users");
+            builder.Entity<IdentityRole>().ToTable("Roles");
+            builder.Entity<IdentityUserRole<string>>().ToTable(name: "UserRoles");
+
+            //remove colimn from table in identity
+            //builder.Entity<IdentityUser>().Ignore(e=>e.PhoneNumber)
+            //                               .Ignore(e=>e.PhoneNumberConfirmed);
+
         }
 
     }
