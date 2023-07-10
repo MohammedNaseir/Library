@@ -2,6 +2,7 @@
 
 namespace library.Web.Controllers
 {
+    [Authorize(Roles = AppRoles.Archive)]
     public class AuthorsController : Controller
     {
         private readonly IAuthorService _authorService;

@@ -12,8 +12,7 @@ namespace library.Web.Controllers
         {
             _copyService = copyService;
         }
-        
-        
+
         
         [AjaxOnly]
         public IActionResult Create(int bookId)

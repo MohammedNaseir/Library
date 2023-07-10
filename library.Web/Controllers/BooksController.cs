@@ -11,6 +11,7 @@ using System.Linq.Dynamic.Core;
 
 namespace library.Web.Controllers
 {
+    [Authorize(Roles = AppRoles.Archive)]
     public class BooksController : Controller
     {
         private readonly IWebHostEnvironment _webHostEnviroment;
