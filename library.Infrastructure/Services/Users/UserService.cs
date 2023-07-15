@@ -132,6 +132,11 @@ namespace library.Infrastructure.Services.Users
         {
             await _userManager.AddToRolesAsync(user,selectedRoles);
         }
-
+        public async Task Unlock(ApplicationUser user)
+        {
+            var isLocked = await _userManager.IsLockedOutAsync(user);
+            if(isLocked)
+               await _userManager.SetLockoutEndDateAsync(user, null);             
+        }
     }
 }

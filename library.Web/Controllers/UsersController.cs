@@ -134,9 +134,17 @@ namespace library.Web.Controllers
             return BadRequest(string.Join(", ", result.Errors.Select(e => e.Description)));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Unlock(string id)
+        { 
+            var user = await _userService.GetUser(id);
+            if(user is null) return NotFound();
+            await _userService.Unlock(user);
+            return Ok();
+        }
 
-
-        public async Task<IActionResult> AllowUsername(UserViewModel model)
+            public async Task<IActionResult> AllowUsername(UserViewModel model)
         {
             bool isAllowed = await _userService.IsUsernameExists(model);
             //var isAllowed = user is null || user.UserName.Equals(model.Username);

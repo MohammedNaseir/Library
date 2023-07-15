@@ -11,24 +11,33 @@ using UoN.ExpressiveAnnotations.NetCore.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using library.Data;
 using library.Infrastructure.Services.Users;
+using library.Infrastructure.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<libraryDbContext>(options =>
     options.UseSqlServer(connectionString));
-
+builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUserClaimsPrincipalFactory>();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 //builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
 //    .AddEntityFrameworkStores<libraryDbContext>();
 
+//builder.Services.ConfigureApplicationCookie(option =>
+//{
+//    option.AccessDeniedPath = "";
+
+//});
+
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
     options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<libraryDbContext>()
     .AddDefaultUI()
     .AddDefaultTokenProviders();
+
+
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = true;
@@ -39,6 +48,8 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Password.RequiredUniqueChars = 1;
     //options.User.AllowedUserNameCharacters = "abc**";
     options.User.RequireUniqueEmail = true;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);
+    options.Lockout.MaxFailedAccessAttempts = 4;
 });
 builder.Services.AddControllersWithViews();
 builder.Services.AddExpressiveAnnotations();

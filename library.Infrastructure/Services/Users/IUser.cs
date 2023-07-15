@@ -30,6 +30,7 @@ namespace library.Infrastructure.Services.Users
 
         public ApplicationUser MapToApplicationUser(UserFormViewModel model, ApplicationUser user);
         public Task<IdentityResult> UpdateResult(ApplicationUser user);
+        public Task Unlock(ApplicationUser user);
 
 
     }
