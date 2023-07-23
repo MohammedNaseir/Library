@@ -4,6 +4,7 @@ using library.Data.Models;
 using library.Infrastructure.Services.Authors;
 using library.Infrastructure.Services.Users;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 
@@ -13,15 +14,17 @@ namespace library.Web.Controllers
     public class UsersController : Controller
     {
         private readonly IUser _userService;
-
+        private readonly IEmailSender _emailSender;
     
-        public UsersController(IUser userService)
+        public UsersController(IUser userService, IEmailSender emailSender)
         {
             _userService = userService;
+            _emailSender = emailSender;
         }
 
-        public  IActionResult Index()
+        public async  Task<IActionResult> Index()
         {
+            await _emailSender.SendEmailAsync("mohammed2562000@gmail.com", "Test", "test");
             var users =  _userService.GetUsers();
             return View(users);
         }

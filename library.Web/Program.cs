@@ -10,8 +10,9 @@ using System.Reflection;
 using UoN.ExpressiveAnnotations.NetCore.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using library.Data;
-using library.Infrastructure.Services.Users;
-using library.Infrastructure.Helpers;
+using library.Core.Services.Images;
+using Microsoft.AspNetCore.Identity.UI.Services;
+using library.Web.Services.Email;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -57,6 +58,7 @@ builder.Services.AddExpressiveAnnotations();
 //mapper
 builder.Services.AddAutoMapper(Assembly.GetAssembly(typeof(MapperProfile)));
 builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(nameof(CloudinarySettings)));
+builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
 
 // Configure My Services 
 builder.Services.AddScoped<ICategoryService, CategoryService>();
@@ -64,6 +66,8 @@ builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<ICopyService, CopyService>();
 builder.Services.AddScoped<IUser, UserService>();
+builder.Services.AddTransient<IImageService, ImageService>();
+builder.Services.AddTransient<IEmailSender, EmailSender>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.
