@@ -24,7 +24,7 @@ namespace library.Web.Services.Email
                 IsBodyHtml = true
             };
 
-            message.To.Add(/*_webHostEnvironment.IsDevelopment() ? "moha.naseir@gmail.com" :*/email);
+            message.To.Add(_webHostEnvironment.IsDevelopment() ? "mohammed2562000@gmail.com" : email);
 
             SmtpClient smtpClient = new(_mailSettings.Host)
             {

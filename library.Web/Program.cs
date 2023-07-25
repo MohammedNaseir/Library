@@ -68,6 +68,7 @@ builder.Services.AddScoped<ICopyService, CopyService>();
 builder.Services.AddScoped<IUser, UserService>();
 builder.Services.AddTransient<IImageService, ImageService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddTransient<IEmailBodyBuilder, EmailBodyBuilder>();
 
 var app = builder.Build();
 // Configure the HTTP request pipeline.

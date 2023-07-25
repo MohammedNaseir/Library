@@ -4,12 +4,14 @@ using library.Data.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace library.Infrastructure.Services.Users
@@ -45,7 +47,7 @@ namespace library.Infrastructure.Services.Users
             return roles;
         }
    
-        public async Task<(UserViewModel, List<string>)> Create(UserFormViewModel model, string createdById)
+        public async Task<(UserViewModel, List<string>,string? code,ApplicationUser? user)> Create(UserFormViewModel model, string createdById)
         {
             ApplicationUser user = new ApplicationUser()
             {
@@ -60,12 +62,15 @@ namespace library.Infrastructure.Services.Users
             if (result.Succeeded)
             {
                 await _userManager.AddToRolesAsync(user, model.SelectedRoles);
-                return (_mapper.Map<UserViewModel>(user), null);
+
+                var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+                return (_mapper.Map<UserViewModel>(user), null,code,user);
             }
             else
             {
                 var errors = result.Errors.Select(e => e.Description).ToList();
-                return (null, errors);
+                return (null, errors,"",null);
             }
         }
         public async Task<bool> IsUsernameExists(UserViewModel user)
