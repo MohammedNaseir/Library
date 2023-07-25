@@ -16,6 +16,9 @@ namespace library.Data
         public DbSet<Book> Books { get; set; }
         public DbSet<BookCategory> BookCategories { get; set; }
         public DbSet<BookCopy> BookCopies { get; set; }
+        public DbSet<Subscriber> Subscribers { get; set; }
+        public DbSet<Governorate> Governorates { get; set; }
+        public DbSet<Area> Areas { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
