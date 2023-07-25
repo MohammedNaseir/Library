@@ -4,8 +4,13 @@ using library.Data.Models;
 using library.Infrastructure.Services.Authors;
 using library.Infrastructure.Services.Users;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
+using System.Text;
+using library.Web.Services.Email;
 
 namespace library.Web.Controllers
 {
@@ -13,15 +18,26 @@ namespace library.Web.Controllers
     public class UsersController : Controller
     {
         private readonly IUser _userService;
-
-    
-        public UsersController(IUser userService)
+        private readonly IEmailSender _emailSender;
+        private readonly IWebHostEnvironment _webHostEnviroment;
+        private readonly IEmailBodyBuilder _emailBodyBuilder;
+        public UsersController(IUser userService, IEmailSender emailSender, IWebHostEnvironment webHostEnviroment, IEmailBodyBuilder emailBodyBuilder)
         {
             _userService = userService;
+            _emailSender = emailSender;
+            _webHostEnviroment = webHostEnviroment;
+            _emailBodyBuilder = emailBodyBuilder;
         }
 
-        public  IActionResult Index()
+        public async  Task<IActionResult> Index()
         {
+            //var filePath = $"{_webHostEnviroment.WebRootPath}/templates/email.html";
+            //StreamReader str = new(filePath);
+            //var body = str.ReadToEnd();
+            //str.Close();
+            //body = body.Replace()
+            //await _emailSender.SendEmailAsync("mohammed2562000@gmail.com", "Test", "test");
+            
             var users =  _userService.GetUsers();
             return View(users);
         }
@@ -44,10 +60,31 @@ namespace library.Web.Controllers
             if(!ModelState.IsValid)            
                 return BadRequest();
             var createdBy = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            var (viewModel,errors) = await _userService.Create(model, createdBy);
-            if(errors != null)
+            var (viewModel,errors,code,user) = await _userService.Create(model, createdBy);
+            if (errors != null)
             {
                 return BadRequest(string.Join(", ", errors));
+            }
+            else
+            {
+
+                code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code!));
+                var callbackUrl = Url.Page(
+                    "/Account/ConfirmEmail",
+                    pageHandler: null,
+                    values: new { area = "Identity", userId = user!.Id, code },
+                    protocol: Request.Scheme);
+
+                var body = _emailBodyBuilder.GetEmailBody(
+                        "https://res.cloudinary.com/devcreed/image/upload/v1668732314/icon-positive-vote-1_rdexez.svg",
+                        $"Hey {user.FullName}, thanks for joining us!",
+                        "please confirm your email",
+                        $"{HtmlEncoder.Default.Encode(callbackUrl!)}",
+                        "Active Account!"
+                    );
+
+                await _emailSender.SendEmailAsync(user.Email, "Confirm your email", body);
+
             }
             return PartialView("_UserRow", viewModel);
         }
@@ -134,9 +171,17 @@ namespace library.Web.Controllers
             return BadRequest(string.Join(", ", result.Errors.Select(e => e.Description)));
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Unlock(string id)
+        { 
+            var user = await _userService.GetUser(id);
+            if(user is null) return NotFound();
+            await _userService.Unlock(user);
+            return Ok();
+        }
 
-
-        public async Task<IActionResult> AllowUsername(UserViewModel model)
+            public async Task<IActionResult> AllowUsername(UserViewModel model)
         {
             bool isAllowed = await _userService.IsUsernameExists(model);
             //var isAllowed = user is null || user.UserName.Equals(model.Username);

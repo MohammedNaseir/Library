@@ -15,8 +15,7 @@ namespace library.Infrastructure.Services.Users
         public IEnumerable<UserViewModel> GetUsers();
         public Task<List<SelectListItem>> GetRoles();
         //public Task<UserViewModel> Create(UserFormViewModel model, string createdById);
-        public Task<(UserViewModel, List<string>)> Create(UserFormViewModel model, string createdById);
-
+        public Task<(UserViewModel, List<string>, string? code, ApplicationUser? user)> Create(UserFormViewModel model, string createdById);
         public Task<bool> IsUsernameExists(UserViewModel user);
         public Task<bool> IsEmailExists(UserViewModel user);
         public Task<ApplicationUser> GetUser(string id);
@@ -30,6 +29,7 @@ namespace library.Infrastructure.Services.Users
 
         public ApplicationUser MapToApplicationUser(UserFormViewModel model, ApplicationUser user);
         public Task<IdentityResult> UpdateResult(ApplicationUser user);
+        public Task Unlock(ApplicationUser user);
 
 
     }

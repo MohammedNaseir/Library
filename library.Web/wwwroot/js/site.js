@@ -227,6 +227,7 @@ $(document).ready(function () {
 
         modal.modal('show');
     });
+
     //Handle Toogle Status
     $('body').delegate('.js-toggle-status', 'click', function () {
         var btn = $(this);
@@ -266,6 +267,49 @@ $(document).ready(function () {
             }
         });
     });
+
+
+    //Handle Unlock
+    $('body').delegate('.js-confirm', 'click', function () {
+        var btn = $(this);
+        bootbox.confirm({
+            message: btn.data('message'),
+            buttons: {
+                confirm: {
+                    label: 'Yes',
+                    className: 'btn-success'
+                },
+                cancel: {
+                    label: 'No',
+                    className: 'btn-secondary'
+                }
+            },
+            callback: function (result) {
+                if (result) {
+                    $.post({
+                        url: btn.data('url'),
+                        data: {
+                            '__RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
+                        success: function (lastUpdatedOn) {
+                            var row = btn.parents('tr');
+                            var status = row.find('.js-status');
+                            var newStatus = status.text().trim() === 'Deleted' ? 'Available' : 'Deleted';
+                            status.text(newStatus).toggleClass('badge-light-success badge-light-danger');
+                            row.find('.js-updated-on').html(lastUpdatedOn);
+                            row.addClass('animate__animated animate__flash');
+                            showSuccessMessage();
+                        },
+                        error: function () {
+                            showErrorMessage();
+                        }
+                    });
+                }
+            }
+        });
+    });
+
+
 
     // handle signout
     $('.js-signout').on('click', function () {

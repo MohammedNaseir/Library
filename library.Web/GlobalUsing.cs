@@ -8,6 +8,10 @@ global using library.Infrastructure.Settings;
 global using Microsoft.AspNetCore.Authorization;
 global using library.Core.Constants;
 global using System.Security.Claims;
-
+global using library.Infrastructure.Services.Users;
+global using library.Infrastructure.Helpers;
+global using SixLabors.ImageSharp;
+global using SixLabors.ImageSharp.Processing;
+global using System.Linq.Dynamic.Core;
 
 
