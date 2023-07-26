@@ -29,8 +29,16 @@ namespace library.Data
                 .Property(e => e.SerialNumber)
                 .HasDefaultValueSql("NEXT VALUE FOR shared.SerialNumber");
 
-            //define key from 2 attr (compsite key)
-            builder.Entity<BookCategory>().HasKey(e => new { e.BookId, e.CategoryId });
+			var cascadeFKs = builder.Model.GetEntityTypes()
+			  .SelectMany(t => t.GetForeignKeys())
+			  .Where(fk => fk.DeleteBehavior == DeleteBehavior.Cascade && !fk.IsOwnership);
+
+			foreach (var fk in cascadeFKs)
+				fk.DeleteBehavior = DeleteBehavior.Restrict;
+
+
+			//define key from 2 attr (compsite key)
+			builder.Entity<BookCategory>().HasKey(e => new { e.BookId, e.CategoryId });
             base.OnModelCreating(builder);
 
             //change tables name

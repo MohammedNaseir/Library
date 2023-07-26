@@ -17,5 +17,6 @@ namespace library.Core.Constants
 		public const string MobileNumberEgypt = "^01[0,1,2,5]{1}[0-9]{8}$";
 		public const string MobileNumbersauida = "^05[0,2,6,9]{1}[0-9]{7}$";
 		public const string MobileNumber = "^97[0,2]{1}[0-9]{9}$";//palstine +97 2 594075177
+		public const string NationalId = "^[2,3]{1}[0-9]{13}$";
 	}
 }
