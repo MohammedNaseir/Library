@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using library.Core.Services.Images;
 using library.Data.Models;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -9,13 +10,15 @@ namespace library.Web.Controllers
 	public class SubscribersController : Controller
 	{
         private readonly libraryDbContext _context;
+        private readonly IDataProtector _dataProtector;
         private readonly IMapper _mapper;
 
         private readonly IImageService _imageService;
 
-        public SubscribersController(libraryDbContext context, IMapper mapper, IImageService imageService)
+        public SubscribersController(libraryDbContext context, IDataProtectionProvider dataProtector, IMapper mapper, IImageService imageService)
         {
             _context = context;
+            _dataProtector = dataProtector.CreateProtector("MySecureKey");
             _mapper = mapper;
             _imageService = imageService;
         }
@@ -41,20 +44,26 @@ namespace library.Web.Controllers
 
             var viewModel = _mapper.Map<SubscriberSearchResultViewModel>(subscriber);
 
+            if (subscriber is not null)
+                viewModel.Key = _dataProtector.Protect(subscriber.Id.ToString());
+
             return PartialView("_Result", viewModel);
         }
 
-        public IActionResult Details(int id)
+        public IActionResult Details(string id)
         {
+            var subscriberId = int.Parse(_dataProtector.Unprotect(id));
+
             var subscriber = _context.Subscribers
                 .Include(s => s.Governorate)
                 .Include(s => s.Area)
-                .SingleOrDefault(s => s.Id == id);
+                .SingleOrDefault(s => s.Id == subscriberId);
 
             if (subscriber is null)
                 return NotFound();
 
             var viewModel = _mapper.Map<SubscriberViewModel>(subscriber);
+            viewModel.Key = id;
 
             return View(viewModel);
         }
@@ -72,9 +81,9 @@ namespace library.Web.Controllers
             if (!ModelState.IsValid)
                 return View("Form", PopulateViewModel(model));
 
-            var Subscriber = _mapper.Map<Subscriber>(model);
+            var subscriber = _mapper.Map<Subscriber>(model);
 
-            var imageName = $"{Guid.NewGuid()}{Path.GetExtension(model.Image.FileName)}";
+            var imageName = $"{Guid.NewGuid()}{Path.GetExtension(model.Image!.FileName)}";
             var imagePath = "/images/Subscribers";
 
             var (isUploaded, errorMessage) = await _imageService.UploadAsync(model.Image, imageName, imagePath, hasThumbnail: true);
@@ -85,27 +94,31 @@ namespace library.Web.Controllers
                 return View("Form", PopulateViewModel(model));
             }
 
-            Subscriber.ImageUrl = $"{imagePath}/{imageName}";
-            Subscriber.ImageThumbnailUrl = $"{imagePath}/thumb/{imageName}";
-            Subscriber.CreatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            subscriber.ImageUrl = $"{imagePath}/{imageName}";
+            subscriber.ImageThumbnailUrl = $"{imagePath}/thumb/{imageName}";
+            subscriber.CreatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
 
-            _context.Add(Subscriber);
+            _context.Add(subscriber);
             _context.SaveChanges();
 
             //TODO: Send welcome email
 
-            return RedirectToAction(nameof(Details), new { id = Subscriber.Id });
+            var subscriberId = _dataProtector.Protect(subscriber.Id.ToString());
+
+            return RedirectToAction(nameof(Details), new { id = subscriberId });
         }
 
-        public IActionResult Edit(int id)
+        public IActionResult Edit(string id)
         {
-            var Subscriber = _context.Subscribers.Find(id);
+            var subscriberId = int.Parse(_dataProtector.Unprotect(id));
+            var subscriber = _context.Subscribers.Find(subscriberId);
 
-            if (Subscriber is null)
+            if (subscriber is null)
                 return NotFound();
 
-            var model = _mapper.Map<SubscriberFormViewModel>(Subscriber);
+            var model = _mapper.Map<SubscriberFormViewModel>(subscriber);
             var viewModel = PopulateViewModel(model);
+            viewModel.Key = id;
 
             return View("Form", viewModel);
         }
@@ -117,15 +130,17 @@ namespace library.Web.Controllers
             if (!ModelState.IsValid)
                 return View("Form", PopulateViewModel(model));
 
-            var Subscriber = _context.Subscribers.Find(model.Id);
+            var subscriberId = int.Parse(_dataProtector.Unprotect(model.Key));
 
-            if (Subscriber is null)
+            var subscriber = _context.Subscribers.Find(subscriberId);
+
+            if (subscriber is null)
                 return NotFound();
 
             if (model.Image is not null)
             {
-                if (!string.IsNullOrEmpty(Subscriber.ImageUrl))
-                    _imageService.Delete(Subscriber.ImageUrl, Subscriber.ImageThumbnailUrl);
+                if (!string.IsNullOrEmpty(subscriber.ImageUrl))
+                    _imageService.Delete(subscriber.ImageUrl, subscriber.ImageThumbnailUrl);
 
                 var imageName = $"{Guid.NewGuid()}{Path.GetExtension(model.Image.FileName)}";
                 var imagePath = "/images/Subscribers";
@@ -142,19 +157,19 @@ namespace library.Web.Controllers
                 model.ImageThumbnailUrl = $"{imagePath}/thumb/{imageName}";
             }
 
-            else if (!string.IsNullOrEmpty(Subscriber.ImageUrl))
+            else if (!string.IsNullOrEmpty(subscriber.ImageUrl))
             {
-                model.ImageUrl = Subscriber.ImageUrl;
-                model.ImageThumbnailUrl = Subscriber.ImageThumbnailUrl;
+                model.ImageUrl = subscriber.ImageUrl;
+                model.ImageThumbnailUrl = subscriber.ImageThumbnailUrl;
             }
 
-            Subscriber = _mapper.Map(model, Subscriber);
-            Subscriber.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
-            Subscriber.LastUpdatedOn = DateTime.Now;
+            subscriber = _mapper.Map(model, subscriber);
+            subscriber.LastUpdatedById = User.FindFirst(ClaimTypes.NameIdentifier)!.Value;
+            subscriber.LastUpdatedOn = DateTime.Now;
 
             _context.SaveChanges();
 
-            return RedirectToAction(nameof(Details), new { id = Subscriber.Id });
+            return RedirectToAction(nameof(Details), new { id = model.Key });
         }
 
         [AjaxOnly]
@@ -170,24 +185,39 @@ namespace library.Web.Controllers
 
         public IActionResult AllowNationalId(SubscriberFormViewModel model)
         {
-            var Subscriber = _context.Subscribers.SingleOrDefault(b => b.NationalId == model.NationalId);
-            var isAllowed = Subscriber is null || Subscriber.Id.Equals(model.Id);
+            var subscriberId = 0;
+
+            if (!string.IsNullOrEmpty(model.Key))
+                subscriberId = int.Parse(_dataProtector.Unprotect(model.Key));
+
+            var subscriber = _context.Subscribers.SingleOrDefault(b => b.NationalId == model.NationalId);
+            var isAllowed = subscriber is null || subscriber.Id.Equals(subscriberId);
 
             return Json(isAllowed);
         }
 
         public IActionResult AllowMobileNumber(SubscriberFormViewModel model)
         {
-            var Subscriber = _context.Subscribers.SingleOrDefault(b => b.MobileNumber == model.MobileNumber);
-            var isAllowed = Subscriber is null || Subscriber.Id.Equals(model.Id);
+            var subscriberId = 0;
+
+            if (!string.IsNullOrEmpty(model.Key))
+                subscriberId = int.Parse(_dataProtector.Unprotect(model.Key));
+
+            var subscriber = _context.Subscribers.SingleOrDefault(b => b.MobileNumber == model.MobileNumber);
+            var isAllowed = subscriber is null || subscriber.Id.Equals(subscriberId);
 
             return Json(isAllowed);
         }
 
         public IActionResult AllowEmail(SubscriberFormViewModel model)
         {
-            var Subscriber = _context.Subscribers.SingleOrDefault(b => b.Email == model.Email);
-            var isAllowed = Subscriber is null || Subscriber.Id.Equals(model.Id);
+            var subscriberId = 0;
+
+            if (!string.IsNullOrEmpty(model.Key))
+                subscriberId = int.Parse(_dataProtector.Unprotect(model.Key));
+
+            var subscriber = _context.Subscribers.SingleOrDefault(b => b.Email == model.Email);
+            var isAllowed = subscriber is null || subscriber.Id.Equals(subscriberId);
 
             return Json(isAllowed);
         }
