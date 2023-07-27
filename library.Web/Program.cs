@@ -13,6 +13,7 @@ using library.Data;
 using library.Core.Services.Images;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using library.Web.Services.Email;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -52,6 +53,7 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(3);
     options.Lockout.MaxFailedAccessAttempts = 4;
 });
+builder.Services.AddDataProtection().SetApplicationName(nameof(library));
 builder.Services.AddControllersWithViews();
 builder.Services.AddExpressiveAnnotations();
 

@@ -9,6 +9,7 @@ namespace library.Core.ViewModels
     public class SubscriberViewModel
     {
         public int Id { get; set; }
+        public string? Key { get; set; }
         public string? FullName { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string? NationalId { get; set; }
