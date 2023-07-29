@@ -88,14 +88,17 @@ namespace library.Web.Areas.Identity.Pages.Account
 				pageHandler: null,
 				values: new { userId = userId, code = code },
 			protocol: Request.Scheme);
-
-			var body = _emailBodyBuilder.GetEmailBody(
-				"https://res.cloudinary.com/decm7aqke/image/upload/v1690188247/logo_pgm7jp.png",
-						$"Hey {user.FullName}, thanks for joining us!",
-						"please confirm your email",
-						$"{HtmlEncoder.Default.Encode(callbackUrl!)}",
-						"Active Account!"
-				);
+            
+			var placeholders = new Dictionary<string, string>()
+                {
+                    { "imageUrl","https://res.cloudinary.com/decm7aqke/image/upload/v1690286570/icon-positive-vote-2_jcxdww_lwsyqe.svg"},
+                    { "header",$"Hey {user.FullName}, thanks for joining us!"},
+                    { "body","please confirm your email"},
+                    { "url",$"{HtmlEncoder.Default.Encode(callbackUrl!)}"},
+                    { "LinkTitle","Active Account!"}
+                };
+            var body = _emailBodyBuilder.GetEmailBody(
+                template: EmailTemplates.Email,placeholders);
 
 			await _emailSender.SendEmailAsync(
 				user.Email,

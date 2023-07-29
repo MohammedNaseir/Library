@@ -4,30 +4,39 @@ using library.Data.Models;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using WhatsAppCloudApi;
+using WhatsAppCloudApi.Services;
 
 namespace library.Web.Controllers
 {
-	public class SubscribersController : Controller
-	{
+    public class SubscribersController : Controller
+    {
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        private readonly IWhatsAppClient _whatsAppClient;
         private readonly libraryDbContext _context;
         private readonly IDataProtector _dataProtector;
         private readonly IMapper _mapper;
 
         private readonly IImageService _imageService;
 
-        public SubscribersController(libraryDbContext context, IDataProtectionProvider dataProtector, IMapper mapper, IImageService imageService)
+        public SubscribersController(libraryDbContext context, IDataProtectionProvider dataProtector, IMapper mapper, IImageService imageService, IWhatsAppClient whatsAppClient, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _dataProtector = dataProtector.CreateProtector("MySecureKey");
             _mapper = mapper;
             _imageService = imageService;
+            _whatsAppClient = whatsAppClient;
+            _webHostEnvironment = webHostEnvironment;
         }
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
-        }
+            
+                  return View();
+        } 
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -103,6 +112,23 @@ namespace library.Web.Controllers
 
             //TODO: Send welcome email
 
+            if (model.HasWhatsApp)
+            {
+                var components = new List<WhatsAppComponent>()
+                {
+                    new WhatsAppComponent
+                    {
+                        Type = "body",
+                        Parameters = new List<object>()
+                        {
+                            new WhatsAppTextParameter{Text = model.FirstName}
+                        }
+                    }
+                };
+                var mobileNumber = _webHostEnvironment.IsDevelopment() ? "972594075177" : model.MobileNumber;
+                await _whatsAppClient.SendMessage($"{mobileNumber}",
+                        WhatsAppLanguageCode.English_US, WhatsAppTemplates.WelcomeMessage);
+            }
             var subscriberId = _dataProtector.Protect(subscriber.Id.ToString());
 
             return RedirectToAction(nameof(Details), new { id = subscriberId });

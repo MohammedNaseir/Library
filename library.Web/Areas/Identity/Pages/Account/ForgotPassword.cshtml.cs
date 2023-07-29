@@ -75,20 +75,21 @@ namespace library.Web.Areas.Identity.Pages.Account
 					pageHandler: null,
 					values: new { area = "Identity", code },
 					protocol: Request.Scheme);
-
+				var placeholders = new Dictionary<string,string>()
+				{
+					{ "imageUrl","https://res.cloudinary.com/decm7aqke/image/upload/v1690286570/icon-positive-vote-2_jcxdww_lwsyqe.svg"},
+					{ "header",$"Hey {user.FullName},"},
+					{ "body","please click the below button to reset you password"},
+					{ "url",$"{HtmlEncoder.Default.Encode(callbackUrl!)}"},
+					{ "linkTitle","Reset Password"}
+				};
 				var body = _emailBodyBuilder.GetEmailBody(
-				"https://res.cloudinary.com/decm7aqke/image/upload/v1690286570/icon-positive-vote-2_jcxdww_lwsyqe.svg",
-						$"Hey {user.FullName},",
-						"please click the below button to reset you password",
-						$"{HtmlEncoder.Default.Encode(callbackUrl!)}",
-						"Reset Password"
-				);
+				template: EmailTemplates.Email,placeholders);
 
 				await _emailSender.SendEmailAsync(
 					Input.Email,
 					"Reset Password",
 					body);
-
 				return RedirectToPage("./ForgotPasswordConfirmation");
 			}
 
