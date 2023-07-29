@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Razor" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Localization" Version="7.0.2" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+    <PackageReference Include="WhatsAppCloudApi" Version="1.0.0" />
   </ItemGroup>
 
   <ItemGroup>

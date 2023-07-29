@@ -14,6 +14,7 @@ using library.Core.Services.Images;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using library.Web.Services.Email;
 using Microsoft.AspNetCore.DataProtection;
+using WhatsAppCloudApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -63,6 +64,7 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
 
 // Configure My Services 
+builder.Services.AddWhatsAppApiClient(builder.Configuration);
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
