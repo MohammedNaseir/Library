@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using library.Core.Services.Images;
 using library.Data.Models;
+using library.Infrastructure.Services.Users;
+using library.Web.Services.Email;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Text.Encodings.Web;
 using WhatsAppCloudApi;
 using WhatsAppCloudApi.Services;
 
@@ -17,10 +21,10 @@ namespace library.Web.Controllers
         private readonly libraryDbContext _context;
         private readonly IDataProtector _dataProtector;
         private readonly IMapper _mapper;
-
+        private readonly IEmailBodyBuilder _emailBodyBuilder;
         private readonly IImageService _imageService;
-
-        public SubscribersController(libraryDbContext context, IDataProtectionProvider dataProtector, IMapper mapper, IImageService imageService, IWhatsAppClient whatsAppClient, IWebHostEnvironment webHostEnvironment)
+        private readonly IEmailSender _emailSender;
+        public SubscribersController(libraryDbContext context, IDataProtectionProvider dataProtector, IMapper mapper, IImageService imageService, IWhatsAppClient whatsAppClient, IWebHostEnvironment webHostEnvironment, IEmailBodyBuilder emailBodyBuilder, IEmailSender emailSender)
         {
             _context = context;
             _dataProtector = dataProtector.CreateProtector("MySecureKey");
@@ -28,12 +32,13 @@ namespace library.Web.Controllers
             _imageService = imageService;
             _whatsAppClient = whatsAppClient;
             _webHostEnvironment = webHostEnvironment;
+            _emailBodyBuilder = emailBodyBuilder;
+            _emailSender = emailSender;
         }
 
 
-        public async Task<IActionResult> Index()
-        {
-            
+        public IActionResult Index()
+        {          
                   return View();
         } 
 
@@ -111,7 +116,22 @@ namespace library.Web.Controllers
             _context.SaveChanges();
 
             //TODO: Send welcome email
+            //var placeholders = new Dictionary<string, string>()
+            //    {
+            //        { "imageUrl","https://res.cloudinary.com/decm7aqke/image/upload/v1690286570/icon-positive-vote-2_jcxdww_lwsyqe.svg"},
+            //        { "header",$"Welcome {model.FirstName} , "},
+            //        { "body","Thank you to join ourApp "}
+            //    };
+            //var body = _emailBodyBuilder.GetEmailBody(
+            //template: EmailTemplates.Email, placeholders);
 
+
+            //await _emailSender.SendEmailAsync(
+            //    model.Email,
+            //    "welecome to library",
+            //    body);
+
+            //send to whats app
             if (model.HasWhatsApp)
             {
                 var components = new List<WhatsAppComponent>()
