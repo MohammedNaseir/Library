@@ -9,5 +9,6 @@ namespace library.Core.Constants
     public static class WhatsAppTemplates
     {
         public const string WelcomeMessage = "hello_world";
+        public const string SubscriptionRenew = "subscription_renew_alert";
     }
 }

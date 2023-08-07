@@ -17,6 +17,7 @@ namespace library.Data
         public DbSet<BookCategory> BookCategories { get; set; }
         public DbSet<BookCopy> BookCopies { get; set; }
         public DbSet<Subscriber> Subscribers { get; set; }
+        public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Governorate> Governorates { get; set; }
         public DbSet<Area> Areas { get; set; }
 

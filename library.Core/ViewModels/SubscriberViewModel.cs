@@ -23,5 +23,7 @@ namespace library.Core.ViewModels
         public string? Address { get; set; }
         public bool IsBlackListed { get; set; }
         public DateTime CreatedOn { get; set; }
+
+        public IEnumerable<SubscriptionViewModel> Subscriptions { get; set; } = new List<SubscriptionViewModel>();
     }
 }
