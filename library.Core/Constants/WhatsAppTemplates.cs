@@ -10,5 +10,6 @@ namespace library.Core.Constants
     {
         public const string WelcomeMessage = "hello_world";
         public const string SubscriptionRenew = "subscription_renew_alert";
+        public const string SubscriptionExpiration = "Subscription_Expiration";
     }
 }

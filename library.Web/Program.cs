@@ -15,6 +15,10 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using library.Web.Services.Email;
 using Microsoft.AspNetCore.DataProtection;
 using WhatsAppCloudApi.Extensions;
+using Hangfire;
+using Hangfire.Dashboard;
+using WhatsAppCloudApi.Services;
+using library.Web.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -74,6 +78,18 @@ builder.Services.AddTransient<IImageService, ImageService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IEmailBodyBuilder, EmailBodyBuilder>();
 
+//Add Hangfire
+builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
+builder.Services.AddHangfireServer();
+
+
+builder.Services.Configure<AuthorizationOptions>(options =>
+options.AddPolicy("AdminsOnly", policy =>
+{
+    policy.RequireAuthenticatedUser();
+    policy.RequireRole(AppRoles.Admin);
+}));
+
 var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -101,6 +117,30 @@ var userManger = scope.ServiceProvider.GetRequiredService<UserManager<Applicatio
 
 await DefaultRoles.SeedRoles(roleManger);
 await DefaultUsers.SeedAdminUser(userManger);
+
+
+//hangfire
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    DashboardTitle = "Library Dashboard",
+    //IsReadOnlyFunc = (DashboardContext context) => true,
+    Authorization = new IDashboardAuthorizationFilter[]
+    {
+        new HangfireAuthorizationFilter("AdminsOnly")
+    }
+});
+
+var dbContext = scope.ServiceProvider.GetRequiredService<libraryDbContext>();
+var webHostEnvironment = scope.ServiceProvider.GetRequiredService<IWebHostEnvironment>();
+var whatsAppClient = scope.ServiceProvider.GetRequiredService<IWhatsAppClient>();
+var emailBodyBuilder = scope.ServiceProvider.GetRequiredService<IEmailBodyBuilder>();
+var emailSender = scope.ServiceProvider.GetRequiredService<IEmailSender>();
+
+var hangfireTasks = new HangfireTasks(dbContext, webHostEnvironment, whatsAppClient,
+    emailBodyBuilder, emailSender);
+
+RecurringJob.AddOrUpdate(() => hangfireTasks.PrepareExpirationAlert(), "0 14 * * *");
+
 
 app.MapControllerRoute(
     name: "default",

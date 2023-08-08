@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Hangfire;
 using library.Core.Services.Images;
 using library.Data.Models;
 using library.Infrastructure.Services.Users;
@@ -126,21 +127,22 @@ namespace library.Web.Controllers
             _context.SaveChanges();
 
 
-            //TODO: Send welcome email
-            //var placeholders = new Dictionary<string, string>()
-            //    {
-            //        { "imageUrl","https://res.cloudinary.com/decm7aqke/image/upload/v1690286570/icon-positive-vote-2_jcxdww_lwsyqe.svg"},
-            //        { "header",$"Welcome {model.FirstName} , "},
-            //        { "body","Thank you to join ourApp "}
-            //    };
-            //var body = _emailBodyBuilder.GetEmailBody(
-            //template: EmailTemplates.Email, placeholders);
+        // Send welcome email
+        var placeholders = new Dictionary<string, string>()
+            {
+                    { "imageUrl","https://res.cloudinary.com/decm7aqke/image/upload/v1690286570/icon-positive-vote-2_jcxdww_lwsyqe.svg"},
+                    { "header",$"Welcome {model.FirstName} , "},
+                    { "body","Thank you to join our App "}
+            };
+            
+            var body = _emailBodyBuilder.GetEmailBody(
+            template: EmailTemplates.Email, placeholders);
 
-
-            //await _emailSender.SendEmailAsync(
-            //    model.Email,
-            //    "welecome to library",
-            //    body);
+            BackgroundJob.Enqueue(() =>
+             _emailSender.SendEmailAsync(
+                model.Email,
+                "welecome to library",
+                body));                   
 
             //send to whats app
             if (model.HasWhatsApp)
@@ -157,8 +159,12 @@ namespace library.Web.Controllers
                     }
                 };
                 var mobileNumber = _webHostEnvironment.IsDevelopment() ? "972594075177" : model.MobileNumber;
-                await _whatsAppClient.SendMessage($"{mobileNumber}",
-                        WhatsAppLanguageCode.English_US, WhatsAppTemplates.WelcomeMessage);
+
+                // change 2 with country code
+                BackgroundJob.Enqueue(() => _whatsAppClient
+                .SendMessage($"{mobileNumber}",
+                        WhatsAppLanguageCode.English_US,
+                        WhatsAppTemplates.WelcomeMessage,components));              
             }
             var subscriberId = _dataProtector.Protect(subscriber.Id.ToString());
 
@@ -231,7 +237,7 @@ namespace library.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> RenewSubscription(string sKey)
+        public IActionResult RenewSubscription(string sKey)
         {
             var subscriberId = int.Parse(_dataProtector.Unprotect(sKey));
 
@@ -273,26 +279,28 @@ namespace library.Web.Controllers
 
             var body = _emailBodyBuilder.GetEmailBody(EmailTemplates.Notification, placeholders);
 
-            await _emailSender.SendEmailAsync(
+            BackgroundJob.Enqueue(() =>
+            _emailSender.SendEmailAsync(
                 subscriber.Email,
-                "Bookify Subscription Renewal", body);
+                "Bookify Subscription Renewal", body)
+            );          
 
             if (subscriber.HasWhatsApp)
             {
-                var components = new List<WhatsAppComponent>()
-                {
-                    new WhatsAppComponent
-                    {
-                        Type = "body",
-                        Parameters = new List<object>()
-                        {
-                            new WhatsAppTextParameter { Text = subscriber.FirstName },
-                            new WhatsAppTextParameter { Text = newSubscription.EndDate.ToString("d MMM, yyyy") },
-                        }
-                    }
-                };
+                //var components = new List<WhatsAppComponent>()
+                //{
+                //    new WhatsAppComponent
+                //    {
+                //        Type = "body",
+                //        Parameters = new List<object>()
+                //        {
+                //            new WhatsAppTextParameter { Text = subscriber.FirstName },
+                //            new WhatsAppTextParameter { Text = newSubscription.EndDate.ToString("d MMM, yyyy") },
+                //        }
+                //    }
+                //};
 
-                var mobileNumber = _webHostEnvironment.IsDevelopment() ? "Add You Number" : subscriber.MobileNumber;
+                //var mobileNumber = _webHostEnvironment.IsDevelopment() ? "Add You Number" : subscriber.MobileNumber;
 
                 //Change 2 with your country code
                 //await _whatsAppClient
