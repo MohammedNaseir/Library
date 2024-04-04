@@ -33,8 +33,11 @@ namespace library.Infrastructure.AutoMapper
                .ForMember(dest => dest.Categories, opt => opt.MapFrom(src => src.Categories.Select(c=>c.Category!.Name).ToList()));
 
             CreateMap<BookCopy, BookCopyViewModel>()
-              .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book!.Title));
-            CreateMap<BookCopy, BookCopyFormViewModel>();
+              .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book!.Title))
+              .ForMember(dest => dest.BookId, opt => opt.MapFrom(src => src.Book!.Id))
+              .ForMember(dest => dest.BookThumbanailUrl, opt => opt.MapFrom(src => src.Book!.ImageThumbnailUrl));
+
+			CreateMap<BookCopy, BookCopyFormViewModel>();
 
             //users
             CreateMap<ApplicationUser, UserViewModel>();
@@ -66,6 +69,11 @@ namespace library.Infrastructure.AutoMapper
 
             //Subscriptionn
             CreateMap<Subscription, SubscriptionViewModel>();
+
+            //Rentals
+            CreateMap<Rental, RentalViewModel>();
+            CreateMap<RentalCopy, RentalCopyViewModel>();
+
         }
     }
 }

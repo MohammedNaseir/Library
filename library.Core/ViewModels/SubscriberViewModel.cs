@@ -25,5 +25,6 @@ namespace library.Core.ViewModels
         public DateTime CreatedOn { get; set; }
 
         public IEnumerable<SubscriptionViewModel> Subscriptions { get; set; } = new List<SubscriptionViewModel>();
+        public IEnumerable<RentalViewModel> Rentals { get; set; } = new List<RentalViewModel>();
     }
 }

@@ -14,6 +14,7 @@ using WhatsAppCloudApi.Services;
 
 namespace library.Web.Controllers
 {
+    [Authorize(Roles =AppRoles.Reception)]
     public class SubscribersController : Controller
     {
         private readonly IWebHostEnvironment _webHostEnvironment;
@@ -73,6 +74,8 @@ namespace library.Web.Controllers
                 .Include(s => s.Governorate)
                 .Include(s => s.Area)
                 .Include(s=>s.Subscriptions)
+                .Include(s=>s.Rentals)
+                .ThenInclude(s=>s.RentalCopies)
                 .SingleOrDefault(s => s.Id == subscriberId);
 
             if (subscriber is null)

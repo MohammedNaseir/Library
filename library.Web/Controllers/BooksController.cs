@@ -45,7 +45,7 @@ namespace library.Web.Controllers
         {
             var skip = int.Parse(Request.Form["start"]);         
             var pageSize = int.Parse(Request.Form["length"]);
-           
+            
             var serarcValue = Request.Form["search[value]"];
             
             var sortColumnIndex = Request.Form[ "order[0][column]"];
@@ -67,6 +67,7 @@ namespace library.Web.Controllers
             };
             return Ok(jsonData);
         }
+
         public IActionResult Details(int id)
         {
             var bookVM = _bookService.GetBookViewModel(id);
@@ -154,7 +155,7 @@ namespace library.Web.Controllers
             var model =_bookService.EditBookGet(book);
             var viewModel = PopulateViweModel(model);
             viewModel.SelectedCategories=book.Categories.Select(c=>c.CategoryId).ToList();
-            return View("Form", viewModel);
+            return View("Form",viewModel);
         }
 
         [HttpPost]
@@ -273,7 +274,7 @@ namespace library.Web.Controllers
         {
             //https://res.cloudinary.com/decm7aqke/image/upload/c_thumb,w_200,g_face/v1680050199/7e4ba894-487d-471d-92f5-10a00705c305_ohgiz6.jpg
             var separator = "image/upload";
-            var urlParts=url.Split(separator);           
+            var urlParts = url.Split(separator);           
             var thumbnailUrl = $"{urlParts[0]}{separator}/c_thumb,w_200,g_face/{urlParts[1]}";
             return thumbnailUrl;
         }

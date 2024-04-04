@@ -40,8 +40,8 @@ namespace library.Infrastructure.Services.Books
         public int Create(BookFormVM bookFormVM,string claim)
         {
             var book = _mapper.Map<Book>(bookFormVM);
-            
-            // to map selected catefories
+
+            // to map selected Categories
             foreach (var category in bookFormVM.SelectedCategories)
             {
                 book.Categories.Add(new BookCategory { CategoryId = category });

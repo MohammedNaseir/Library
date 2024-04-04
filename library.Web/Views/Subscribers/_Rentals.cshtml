@@ -1,0 +1,69 @@
+﻿@model IEnumerable<RentalViewModel> 
+@if(!Model.Any())
+{
+        <div class="@(Model.Any() ? "d-none" : string.Empty) alert bg-light-info border border-warning border-3 border-dashed d-flex flex-column flex-sm-row w-100 p-5 mt-10 js-alert">
+            <!--begin::Icon-->
+            <!--begin::Svg Icon | path: icons/duotune/general/gen007.svg-->
+            <span class="svg-icon svg-icon-2hx svg-icon-warning me-4 mb-5 mb-sm-0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect opacity="0.3" x="2" y="2" width="20" height="20" rx="10" fill="currentColor" />
+                    <rect x="11" y="14" width="7" height="2" rx="1" transform="rotate(-90 11 14)" fill="currentColor" />
+                    <rect x="11" y="17" width="2" height="2" rx="1" transform="rotate(-90 11 17)" fill="currentColor" />
+                </svg>
+            </span>
+            <!--end::Svg Icon-->
+            <!--end::Icon-->
+            <!--begin::Content-->
+            <div class="d-flex flex-column pe-0 pe-sm-10 justify-content-center">
+                <h5 class="mb-1">This Subscriber has no Rentals yet.</h5>
+            </div>
+            <!--end::Content-->
+        </div>
+}
+else
+{
+    <div class="table-responsive">
+        <!--begin::Table-->
+        <table class="table align-middle gs-0 gy-4">
+            <!--begin::Table head-->
+            <thead>
+                <tr class="fw-bold text-muted bg-light">
+                    <th class="ps-4 min-w-125px rounded-start">Start Date</th>
+                    <th class="min-w-125px"># Of Copeis</th>
+                    <th class="min-w-150px">Total Delay (Days)</th>
+                    <th class="min-w-150px">Added On</th>
+                    <th class="min-w-125px text-end rounded-end pe-4">Add On</th>
+                </tr>
+            </thead>
+            <!--end::Table head-->
+            <!--begin::Table body-->
+            <tbody>
+                @foreach(var rental in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center ps-3">
+                                @rental.StartDate.ToString("d MMM, yyyy")
+                            </div>
+                        </td>
+                        <td>
+                            @rental.NumberOfCopies
+                        </td>
+                        <td>
+                            @rental.TotalDelayInDays
+                        </td>
+                        <td class="text-end pe-4">
+                            @rental.CreatedOn
+                        </td>
+                        <td class="text-end pe-4">
+                            <a class="btn btn-primary btn-sm" asp-action="Details" asp-controller="Rentals" asp-route-id="@rental.Id">Deatils</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <!--end::Table body-->
+        </table>
+        <!--end::Table-->
+    </div>
+
+}

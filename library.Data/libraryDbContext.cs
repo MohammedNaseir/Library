@@ -9,6 +9,7 @@ namespace library.Data
     {
         public libraryDbContext(DbContextOptions<libraryDbContext> options) : base(options)
         {
+
         }
 
         public DbSet<Category> Categories { get; set; }
@@ -20,12 +21,15 @@ namespace library.Data
         public DbSet<Subscription> Subscriptions { get; set; }
         public DbSet<Governorate> Governorates { get; set; }
         public DbSet<Area> Areas { get; set; }
+        public DbSet<Rental> Rentals { get; set; }
+        public DbSet<RentalCopy> RentalCopies { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             // add sequence for serial nubmer
             builder.HasSequence<int>("SerialNumber", schema: "shared")
                .StartsAt(1000001);
+            
             builder.Entity<BookCopy>()
                 .Property(e => e.SerialNumber)
                 .HasDefaultValueSql("NEXT VALUE FOR shared.SerialNumber");
@@ -40,6 +44,8 @@ namespace library.Data
 
 			//define key from 2 attr (compsite key)
 			builder.Entity<BookCategory>().HasKey(e => new { e.BookId, e.CategoryId });
+			builder.Entity<RentalCopy>().HasKey(e => new { e.RentalId, e.BookCopyId });
+           
             base.OnModelCreating(builder);
 
             //change tables name

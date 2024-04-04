@@ -19,6 +19,7 @@ using Hangfire;
 using Hangfire.Dashboard;
 using WhatsAppCloudApi.Services;
 using library.Web.Tasks;
+using library.Infrastructure.Services.Rentals;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -43,8 +44,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
     .AddEntityFrameworkStores<libraryDbContext>()
     .AddDefaultUI()
     .AddDefaultTokenProviders();
-
-
 builder.Services.Configure<IdentityOptions>(options =>
 {
     options.Password.RequireDigit = true;
@@ -68,12 +67,14 @@ builder.Services.Configure<CloudinarySettings>(builder.Configuration.GetSection(
 builder.Services.Configure<MailSettings>(builder.Configuration.GetSection(nameof(MailSettings)));
 
 // Configure My Services 
+
 builder.Services.AddWhatsAppApiClient(builder.Configuration);
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IAuthorService, AuthorService>();
 builder.Services.AddScoped<IBookService, BookService>();
 builder.Services.AddScoped<ICopyService, CopyService>();
 builder.Services.AddScoped<IUser, UserService>();
+builder.Services.AddScoped<IRentalService,RentalService>();
 builder.Services.AddTransient<IImageService, ImageService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IEmailBodyBuilder, EmailBodyBuilder>();
@@ -91,6 +92,7 @@ options.AddPolicy("AdminsOnly", policy =>
 }));
 
 var app = builder.Build();
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

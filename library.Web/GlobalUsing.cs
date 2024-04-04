@@ -13,5 +13,6 @@ global using library.Infrastructure.Helpers;
 global using SixLabors.ImageSharp;
 global using SixLabors.ImageSharp.Processing;
 global using System.Linq.Dynamic.Core;
+global using library.Core.Enums;
 
 

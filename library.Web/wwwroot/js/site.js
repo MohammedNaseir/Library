@@ -34,11 +34,11 @@ function showSuccessMessage() {
     //});
 
 }
-function disableSubmitButton() {
-    $('body :submit').attr('disable', 'disable').attr('data-kt-indicator', 'on');
+function disableSubmitButton(btn) {
+    $(btn).attr('disable', 'disable').attr('data-kt-indicator', 'on');
 }
 function onModalBegin() {
-    disableSubmitButton();
+    disableSubmitButton($('#Modal').find(':submit'));
 }
 function onModalComplete() {
     $('body :submit').removeAttr('disable').removeAttr('data-kt-indicator');
@@ -170,7 +170,7 @@ $(document).ready(function () {
             });
         }
         var isValid = $(this).valid();
-        if(isValid) disableSubmitButton()
+        if (isValid) disableSubmitButton($(this).find(':submit'))
     });
 
     //select
@@ -267,9 +267,7 @@ $(document).ready(function () {
             }
         });
     });
-
-
-    //Handle Unlock
+    //Handle Unlock User
     $('body').delegate('.js-confirm', 'click', function () {
         var btn = $(this);
         bootbox.confirm({
@@ -308,10 +306,7 @@ $(document).ready(function () {
             }
         });
     });
-
-
-
-    // handle signout
+    // handle signout User
     $('.js-signout').on('click', function () {
         $('#signout').submit();
     });
