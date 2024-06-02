@@ -9,6 +9,7 @@ namespace library.Core.Enums
     public enum RentalConfiguration
     {
         RentalDuration=7,
+        MaxRentalDuration=7,
         MaxAllowedCopies=3
     }
 }

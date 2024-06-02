@@ -32,9 +32,9 @@ namespace library.Web.Services.Email
                 Credentials = new NetworkCredential(_mailSettings.Email, _mailSettings.Password),
                 EnableSsl = true
             };
-
+            
             await smtpClient.SendMailAsync(message);
-
+            
             smtpClient.Dispose();
         }
     }

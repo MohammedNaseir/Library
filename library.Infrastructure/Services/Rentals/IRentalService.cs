@@ -11,24 +11,25 @@ namespace library.Infrastructure.Services.Rentals
 {
     public interface IRentalService
     {
-        //IEnumerable<SelectListItem> GetAuthors();
-        //IEnumerable<SelectListItem> GetCategories();
-        //IQueryable<Book> GetBooks();
-        //int Create(BookFormVM bookFormVM, string claim);
-        //void Update(BookFormVM bookFormVM);
+        IEnumerable<RentalCopy> GetHistory(int id);
+        IEnumerable<CopyHistoryViewModel> MapToCopyHistoryViewModel(IEnumerable<RentalCopy> copies);
+        IList<RentalCopyViewModel> MapToIListBookCopyViewModel(List<RentalCopy> rentalCopies);
+        Subscriber GetSubscriberWithSubsription(int subscriberId);
+        Rental GetRentalsReturnDetails(int id);
         bool CopyInRental(BookCopy copy);
         List<int> GetBookIdInRental(int subscriberId);
+        List<int> GetBookIdInRentalEdit(int subscriberId, int id);
         List<BookCopy> GetListOfCopies(RentalFormViewModel model);
         BookCopy GetBookCopy(string sKey);
         Subscriber GetSubscriber(int subscriberId);
-
-        //BookFormVM EditBookGet(Book book);
-        //IEnumerable<BookViewModel> BookMap(List<Book> Books);
-        //Book IsBookExists(BookFormVM book);
-        //BookViewModel GetBookViewModel(int id);
+        Rental GetRental(int id);
         BookCopyViewModel MapToBookCopyViewModel(BookCopy BookCopy);
-
-
-		void SaveChanges();
+        int GetRentalCopiesCount(int id);
+        Rental GetRentalDetails(int id);
+        RentalViewModel MapToRentalViewModel(Rental rental);
+        List<int> GetRentalCopyIds(Rental rental);
+        IEnumerable<BookCopyViewModel> GetCurrentCopies(List<int> copyIds);
+        Rental GetRentalInclueRentlCopies(int id);
+        void SaveChanges();
     }
 }
