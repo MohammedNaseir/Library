@@ -20,6 +20,7 @@ using Hangfire.Dashboard;
 using WhatsAppCloudApi.Services;
 using library.Web.Tasks;
 using library.Infrastructure.Services.Rentals;
+using library.Infrastructure.Services.Dashboard;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
@@ -58,6 +59,9 @@ builder.Services.Configure<IdentityOptions>(options =>
     options.Lockout.MaxFailedAccessAttempts = 4;
 });
 builder.Services.AddDataProtection().SetApplicationName(nameof(library));
+//hashid
+//builder.Services.AddSingleton<>
+
 builder.Services.AddControllersWithViews();
 builder.Services.AddExpressiveAnnotations();
 
@@ -77,6 +81,7 @@ builder.Services.AddScoped<IRentalService,RentalService>();
 builder.Services.AddTransient<IImageService, ImageService>();
 builder.Services.AddTransient<IEmailSender, EmailSender>();
 builder.Services.AddTransient<IEmailBodyBuilder, EmailBodyBuilder>();
+builder.Services.AddTransient<IDashboardServire, DashboardServire>();
 
 //Add Hangfire
 builder.Services.AddHangfire(x => x.UseSqlServerStorage(connectionString));
